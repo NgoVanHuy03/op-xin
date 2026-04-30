@@ -9,6 +9,7 @@
 tailwind.config = {
   theme: {
     extend: {
+      screens: { xs: '380px' },
       colors: {
         pri: { DEFAULT:'#6c5ce7', light:'#a29bfe', dark:'#4834d4' },
         acc: { DEFAULT:'#e84393', light:'#fd79a8' },
@@ -22,7 +23,9 @@ tailwind.config = {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-html{scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth;-webkit-tap-highlight-color:transparent;height:100%}
+body{min-height:100%}
+
 .filter-scroll::-webkit-scrollbar{display:none}
 .filter-scroll{-ms-overflow-style:none;scrollbar-width:none}
 
@@ -37,130 +40,125 @@ html{scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
 .slider-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.4);cursor:pointer;transition:all .3s}
 .slider-dot.active{background:#fff;width:24px;border-radius:4px}
 
-/* Pulse animation for urgency */
 @keyframes pulse-subtle{0%,100%{opacity:1}50%{opacity:.7}}
 .pulse{animation:pulse-subtle 2s infinite}
 
-/* Flash sale glow */
 @keyframes glow{0%,100%{box-shadow:0 0 8px rgba(255,71,87,.3)}50%{box-shadow:0 0 20px rgba(255,71,87,.6)}}
 .flash-glow{animation:glow 2s infinite}
 
-/* Fade in */
-@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
-.fade-in{animation:fadeIn .4s ease}
-
-/* Modal */
 @keyframes mIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
 .modal-anim{animation:mIn .25s ease}
 
-/* Best seller horizontal scroll */
 .bs-scroll::-webkit-scrollbar{display:none}
 .bs-scroll{-ms-overflow-style:none;scrollbar-width:none}
 
-/* Mobile bottom sheet modal */
-@media(max-width:640px){
+.cd-box{background:rgba(0,0,0,.2);padding:4px 6px;border-radius:4px;font-variant-numeric:tabular-nums;min-width:28px;text-align:center;display:inline-block}
+
+/* Mobile modal bottom sheet */
+@media(max-width:639px){
   .modal-wrap{align-items:flex-end!important;padding:0!important}
   .modal-box{border-radius:14px 14px 0 0!important;margin-top:auto;max-height:85vh;width:100%;max-width:100%}
 }
-
-/* Countdown digits */
-.cd-box{background:rgba(0,0,0,.2);padding:4px 6px;border-radius:4px;font-variant-numeric:tabular-nums;min-width:28px;text-align:center;display:inline-block}
 </style>
 </head>
 <body class="bg-gray-50 text-gray-900 font-sans overflow-x-hidden">
 
-<!-- ===== NAVBAR ===== -->
-<nav class="fixed top-0 inset-x-0 z-50 bg-white/95 backdrop-blur border-b border-gray-100 h-14 flex items-center px-4 gap-3">
-  <a href="#" class="text-xl font-extrabold text-pri whitespace-nowrap">Ốp<span class="text-acc">Xịn</span></a>
-  <div class="flex-1 min-w-0 relative">
-    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm pointer-events-none">🔍</span>
-    <input id="searchInp" type="text" placeholder="Tìm ốp cho máy của bạn..." class="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-pri transition" oninput="filter()">
-  </div>
-  <select id="sortSel" class="py-2 pl-3 pr-7 text-sm font-medium border border-gray-200 rounded-lg bg-white appearance-none cursor-pointer focus:outline-none focus:border-pri" style="background-image:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%236b7280'/%3E%3C/svg%3E&quot;);background-repeat:no-repeat;background-position:right 8px center" onchange="filter()">
-    <option value="popular">🔥 Bán chạy</option>
-    <option value="newest">🆕 Mới nhất</option>
-    <option value="price-asc">💰 Giá thấp→cao</option>
-    <option value="price-desc">💎 Giá cao→thấp</option>
-    <option value="rating">⭐ Đánh giá</option>
-  </select>
-  <a href="https://zalo.me" target="_blank" class="bg-gradient-to-br from-pri to-acc text-white text-xs font-bold py-2 px-3 rounded-lg hover:opacity-90 transition whitespace-nowrap flex items-center gap-1 shadow-lg shadow-pri/20">💬<span class="hidden sm:inline"> Zalo</span></a>
-</nav>
+<!-- ===== FIXED HEADER CONTAINER (no background gaps) ===== -->
+<div class="fixed top-0 inset-x-0 z-50">
 
-<!-- ===== URGENCY STRIP ===== -->
-<div class="fixed top-14 inset-x-0 z-40 bg-hot text-white text-[11px] sm:text-xs font-semibold py-1.5 text-center overflow-hidden" id="urgencyStrip">
-  <div class="flex items-center justify-center gap-2">
-    <span>🔥</span><span>SALE cuối tuần — Giảm đến <strong class="text-yellow-200">30%</strong></span>
-    <span class="hidden sm:inline">⏱️</span><span class="hidden sm:inline">Kết thúc sau: <span id="countdown1" class="cd-box">02:14:35</span></span>
+  <!-- NAVBAR -->
+  <nav class="bg-white/95 backdrop-blur border-b border-gray-100 h-14 flex items-center px-3 sm:px-4 gap-2 sm:gap-3">
+    <a href="#" class="text-lg sm:text-xl font-extrabold text-pri whitespace-nowrap flex-shrink-0">Ốp<span class="text-acc">Xịn</span></a>
+    <div class="flex-1 min-w-0 relative">
+      <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs sm:text-sm pointer-events-none">🔍</span>
+      <input id="searchInp" type="text" placeholder="Tìm ốp cho máy bạn..." class="w-full pl-8 pr-2.5 py-2 text-xs sm:text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-pri transition" oninput="filter()">
+    </div>
+    <select id="sortSel" class="hidden xs:block py-2 pl-2.5 pr-6 text-xs sm:text-sm font-medium border border-gray-200 rounded-lg bg-white appearance-none cursor-pointer focus:outline-none focus:border-pri flex-shrink-0" style="background-image:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%236b7280'/%3E%3C/svg%3E&quot;);background-repeat:no-repeat;background-position:right 6px center" onchange="filter()">
+      <option value="popular">🔥 Bán chạy</option>
+      <option value="newest">🆕 Mới</option>
+      <option value="price-asc">💰 Giá ↑</option>
+      <option value="price-desc">💎 Giá ↓</option>
+      <option value="rating">⭐ Rating</option>
+    </select>
+    <a href="https://zalo.me" target="_blank" class="bg-gradient-to-br from-pri to-acc text-white text-[11px] sm:text-xs font-bold py-2 px-2.5 sm:px-3 rounded-lg hover:opacity-90 transition whitespace-nowrap flex items-center gap-1 shadow-lg shadow-pri/20 flex-shrink-0">💬<span class="hidden sm:inline"> Zalo</span></a>
+  </nav>
+
+  <!-- URGENCY STRIP -->
+  <div class="bg-hot text-white text-[10px] sm:text-xs font-semibold py-1 text-center overflow-hidden" id="urgencyStrip">
+    🔥 SALE cuối tuần — Giảm đến <strong class="text-yellow-200">30%</strong> <span class="hidden xs:inline">· ⏱️ Kết thúc sau: <span id="countdown1" class="cd-box">02:14:35</span></span>
+  </div>
+
+  <!-- FILTER CHIPS -->
+  <div class="bg-white border-b border-gray-100 py-1.5 px-3 sm:px-4 flex items-center gap-1.5 sm:gap-2 filter-scroll overflow-x-auto">
+    <span class="text-[9px] sm:text-[10px] font-bold text-gray-400 uppercase tracking-wider whitespace-nowrap flex-shrink-0">Hãng</span>
+    <span class="chip active shrink-0 px-2.5 py-1 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-brand="" onclick="setBrand(this,'')">Tất cả</span>
+    <span class="chip shrink-0 px-2.5 py-1 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-brand="iphone" onclick="setBrand(this,'iphone')">🍎 iPhone</span>
+    <span class="chip shrink-0 px-2.5 py-1 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-brand="samsung" onclick="setBrand(this,'samsung')">📱 Samsung</span>
+    <span class="chip shrink-0 px-2.5 py-1 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-brand="xiaomi" onclick="setBrand(this,'xiaomi')">🚀 Xiaomi</span>
+    <span class="chip shrink-0 px-2.5 py-1 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-brand="oppo" onclick="setBrand(this,'oppo')">💎 OPPO</span>
+    <span class="chip shrink-0 px-2.5 py-1 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-brand="vivo" onclick="setBrand(this,'vivo')">✨ Vivo</span>
+    <span class="chip shrink-0 px-2.5 py-1 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-brand="realme" onclick="setBrand(this,'realme')">⚡ Realme</span>
+    <span class="chip shrink-0 px-2.5 py-1 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-brand="oneplus" onclick="setBrand(this,'oneplus')">🔥 OnePlus</span>
+    <span class="chip shrink-0 px-2.5 py-1 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-brand="google" onclick="setBrand(this,'google')">🎯 Pixel</span>
+    <span class="chip shrink-0 px-2.5 py-1 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-brand="nothing" onclick="setBrand(this,'nothing')">🔘 Nothing</span>
+    <span class="chip shrink-0 px-2.5 py-1 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-brand="sony" onclick="setBrand(this,'sony')">🎮 Sony</span>
+    <span class="chip shrink-0 px-2.5 py-1 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-brand="huawei" onclick="setBrand(this,'huawei')">🔴 Huawei</span>
+    <span class="chip shrink-0 px-2.5 py-1 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-brand="tecno" onclick="setBrand(this,'tecno')">🌟 Tecno</span>
+    <div class="w-px h-5 bg-gray-200 shrink-0 mx-0.5 sm:mx-1"></div>
+    <span class="text-[9px] sm:text-[10px] font-bold text-gray-400 uppercase tracking-wider whitespace-nowrap flex-shrink-0">Loại</span>
+    <span class="chip active shrink-0 px-2.5 py-1 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-type="" onclick="setType(this,'')">Tất cả</span>
+    <span class="chip shrink-0 px-2.5 py-1 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-type="clear" onclick="setType(this,'clear')">🫧 Trong</span>
+    <span class="chip shrink-0 px-2.5 py-1 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-type="matte" onclick="setType(this,'matte')">🖤 Nhám</span>
+    <span class="chip shrink-0 px-2.5 py-1 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-type="silicone" onclick="setType(this,'silicone')">🫠 Silicone</span>
+    <span class="chip shrink-0 px-2.5 py-1 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-type="leather" onclick="setType(this,'leather')">👜 Da</span>
+    <span class="chip shrink-0 px-2.5 py-1 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-type="magsafe" onclick="setType(this,'magsafe')">🧲 MagSafe</span>
+    <span class="chip shrink-0 px-2.5 py-1 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-type="armor" onclick="setType(this,'armor')">🛡️ Giáp</span>
+    <span class="chip shrink-0 px-2.5 py-1 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-type="printed" onclick="setType(this,'printed')">🎨 In hình</span>
+    <span class="chip shrink-0 px-2.5 py-1 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-type="carbon" onclick="setType(this,'carbon')">🏁 Carbon</span>
+    <span class="chip shrink-0 px-2.5 py-1 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-type="wood" onclick="setType(this,'wood')">🪵 Gỗ</span>
+    <span class="chip shrink-0 px-2.5 py-1 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-type="glitter" onclick="setType(this,'glitter')">✨ Glitter</span>
   </div>
 </div>
 
-<!-- ===== FILTER CHIPS ===== -->
-<div class="fixed top-[78px] inset-x-0 z-30 bg-white border-b border-gray-100 py-2 px-4 flex items-center gap-2 filter-scroll overflow-x-auto" id="filterBar">
-  <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider whitespace-nowrap">Hãng</span>
-  <span class="chip active shrink-0 px-3 py-1.5 text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-brand="" onclick="setBrand(this,'')">Tất cả</span>
-  <span class="chip shrink-0 px-3 py-1.5 text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-brand="iphone" onclick="setBrand(this,'iphone')">🍎 iPhone</span>
-  <span class="chip shrink-0 px-3 py-1.5 text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-brand="samsung" onclick="setBrand(this,'samsung')">📱 Samsung</span>
-  <span class="chip shrink-0 px-3 py-1.5 text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-brand="xiaomi" onclick="setBrand(this,'xiaomi')">🚀 Xiaomi</span>
-  <span class="chip shrink-0 px-3 py-1.5 text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-brand="oppo" onclick="setBrand(this,'oppo')">💎 OPPO</span>
-  <span class="chip shrink-0 px-3 py-1.5 text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-brand="vivo" onclick="setBrand(this,'vivo')">✨ Vivo</span>
-  <span class="chip shrink-0 px-3 py-1.5 text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-brand="realme" onclick="setBrand(this,'realme')">⚡ Realme</span>
-  <span class="chip shrink-0 px-3 py-1.5 text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-brand="oneplus" onclick="setBrand(this,'oneplus')">🔥 OnePlus</span>
-  <span class="chip shrink-0 px-3 py-1.5 text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-brand="google" onclick="setBrand(this,'google')">🎯 Pixel</span>
-  <span class="chip shrink-0 px-3 py-1.5 text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-brand="nothing" onclick="setBrand(this,'nothing')">🔘 Nothing</span>
-  <span class="chip shrink-0 px-3 py-1.5 text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-brand="sony" onclick="setBrand(this,'sony')">🎮 Sony</span>
-  <span class="chip shrink-0 px-3 py-1.5 text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-brand="huawei" onclick="setBrand(this,'huawei')">🔴 Huawei</span>
-  <span class="chip shrink-0 px-3 py-1.5 text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-brand="tecno" onclick="setBrand(this,'tecno')">🌟 Tecno</span>
-  <div class="w-px h-5 bg-gray-200 shrink-0 mx-1"></div>
-  <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider whitespace-nowrap">Loại</span>
-  <span class="chip active shrink-0 px-3 py-1.5 text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-type="" onclick="setType(this,'')">Tất cả</span>
-  <span class="chip shrink-0 px-3 py-1.5 text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-type="clear" onclick="setType(this,'clear')">🫧 Trong suốt</span>
-  <span class="chip shrink-0 px-3 py-1.5 text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-type="matte" onclick="setType(this,'matte')">🖤 Nhám</span>
-  <span class="chip shrink-0 px-3 py-1.5 text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-type="silicone" onclick="setType(this,'silicone')">🫠 Silicone</span>
-  <span class="chip shrink-0 px-3 py-1.5 text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-type="leather" onclick="setType(this,'leather')">👜 Da thật</span>
-  <span class="chip shrink-0 px-3 py-1.5 text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-type="magsafe" onclick="setType(this,'magsafe')">🧲 MagSafe</span>
-  <span class="chip shrink-0 px-3 py-1.5 text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-type="armor" onclick="setType(this,'armor')">🛡️ Giáp</span>
-  <span class="chip shrink-0 px-3 py-1.5 text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-type="printed" onclick="setType(this,'printed')">🎨 In hình</span>
-  <span class="chip shrink-0 px-3 py-1.5 text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-type="carbon" onclick="setType(this,'carbon')">🏁 Carbon</span>
-  <span class="chip shrink-0 px-3 py-1.5 text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-type="wood" onclick="setType(this,'wood')">🪵 Gỗ</span>
-  <span class="chip shrink-0 px-3 py-1.5 text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-type="glitter" onclick="setType(this,'glitter')">✨ Glitter</span>
-</div>
+<!-- ===== HEADER SPACER (pushes content below fixed header) ===== -->
+<div id="headerSpacer" class="w-full" style="height:116px"></div>
 
 <!-- ===== MAIN ===== -->
-<main class="pt-[132px] pb-10 px-4 max-w-6xl mx-auto sm:pt-[136px]">
+<main class="pb-10 px-3 sm:px-4 max-w-6xl mx-auto">
 
   <!-- ★ HERO SLIDER ★ -->
-  <div class="relative rounded-2xl overflow-hidden mb-5 shadow-xl" id="heroSlider">
+  <div class="relative rounded-2xl overflow-hidden mb-4 sm:mb-5 shadow-xl" id="heroSlider">
     <div class="slider-track" id="sliderTrack">
       <!-- Slide 1 -->
-      <div class="shrink-0 w-full bg-gradient-to-br from-pri-dark via-pri to-acc p-6 sm:p-8 text-white">
+      <div class="shrink-0 w-full bg-gradient-to-br from-pri-dark via-pri to-acc p-5 sm:p-8 text-white">
         <div class="max-w-lg">
-          <span class="bg-white/20 text-white text-xs font-bold px-2 py-1 rounded mb-2 inline-block">✨ BỘ SƯU TẬP MỚI</span>
-          <h1 class="text-xl sm:text-3xl font-black leading-tight mt-1 mb-2">Ốp <em class="not-italic text-yellow-200">Carbon Fiber</em><br>Siêu nhẹ — Siêu cứng</h1>
-          <p class="text-sm opacity-90 mb-4">Sợi carbon thật, kết cấu tổ ong. Phong cách F1 đích thực cho chiếc điện thoại của bạn.</p>
-          <a href="#products" onclick="setType(document.querySelector('[data-type=carbon]'),'carbon')" class="inline-block bg-white text-pri font-bold text-sm px-5 py-2.5 rounded-lg hover:scale-105 transition">Xem ngay →</a>
+          <span class="bg-white/20 text-white text-[10px] sm:text-xs font-bold px-2 py-1 rounded mb-1.5 sm:mb-2 inline-block">✨ BỘ SƯU TẬP MỚI</span>
+          <h1 class="text-lg sm:text-2xl md:text-3xl font-black leading-tight mt-0.5 sm:mt-1 mb-1.5 sm:mb-2">Ốp <em class="not-italic text-yellow-200">Carbon Fiber</em><br class="hidden xs:block">Siêu nhẹ — Siêu cứng</h1>
+          <p class="text-[11px] sm:text-sm opacity-90 mb-3 sm:mb-4 max-w-xs sm:max-w-md">Sợi carbon thật, kết cấu tổ ong. Phong cách F1 đích thực.</p>
+          <a href="#products" onclick="setType(document.querySelector('[data-type=carbon]'),'carbon')" class="inline-block bg-white text-pri font-bold text-[11px] sm:text-sm px-4 sm:px-5 py-2 sm:py-2.5 rounded-lg hover:scale-105 transition">Xem ngay →</a>
         </div>
       </div>
       <!-- Slide 2 -->
-      <div class="shrink-0 w-full bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 p-6 sm:p-8 text-white">
+      <div class="shrink-0 w-full bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 p-5 sm:p-8 text-white">
         <div class="max-w-lg">
-          <span class="bg-acc text-white text-xs font-bold px-2 py-1 rounded mb-2 inline-block">🔥 BÁN CHẠY NHẤT</span>
-          <h1 class="text-xl sm:text-3xl font-black leading-tight mt-1 mb-2">Ốp <em class="not-italic text-acc-light">Da Thật</em><br>Đẳng cấp doanh nhân</h1>
-          <p class="text-sm opacity-90 mb-4">Da thật cao cấp, khâu thủ công từng đường kim. Patina đẹp theo năm tháng.</p>
-          <a href="#products" onclick="setType(document.querySelector('[data-type=leather]'),'leather')" class="inline-block bg-acc text-white font-bold text-sm px-5 py-2.5 rounded-lg hover:scale-105 transition">Khám phá ngay →</a>
+          <span class="bg-acc text-white text-[10px] sm:text-xs font-bold px-2 py-1 rounded mb-1.5 sm:mb-2 inline-block">🔥 BÁN CHẠY NHẤT</span>
+          <h1 class="text-lg sm:text-2xl md:text-3xl font-black leading-tight mt-0.5 sm:mt-1 mb-1.5 sm:mb-2">Ốp <em class="not-italic text-acc-light">Da Thật</em><br class="hidden xs:block">Đẳng cấp doanh nhân</h1>
+          <p class="text-[11px] sm:text-sm opacity-90 mb-3 sm:mb-4 max-w-xs sm:max-w-md">Da thật cao cấp, khâu thủ công. Patina đẹp theo năm tháng.</p>
+          <a href="#products" onclick="setType(document.querySelector('[data-type=leather]'),'leather')" class="inline-block bg-acc text-white font-bold text-[11px] sm:text-sm px-4 sm:px-5 py-2 sm:py-2.5 rounded-lg hover:scale-105 transition">Khám phá ngay →</a>
         </div>
       </div>
       <!-- Slide 3 -->
-      <div class="shrink-0 w-full bg-gradient-to-br from-green-600 via-teal-500 to-cyan-500 p-6 sm:p-8 text-white">
+      <div class="shrink-0 w-full bg-gradient-to-br from-green-600 via-teal-500 to-cyan-500 p-5 sm:p-8 text-white">
         <div class="max-w-lg">
-          <span class="bg-white/20 text-white text-xs font-bold px-2 py-1 rounded mb-2 inline-block">💎 GIÁ TỐT NHẤT</span>
-          <h1 class="text-xl sm:text-3xl font-black leading-tight mt-1 mb-2">Ốp <em class="not-italic text-yellow-200">Trong Suốt</em><br>Chống ố vàng 12 tháng</h1>
-          <p class="text-sm opacity-90 mb-4">TPU/PC cao cấp, khoe trọn vẻ đẹp thiết kế gốc. Giá chỉ từ 150K!</p>
-          <a href="#products" onclick="setType(document.querySelector('[data-type=clear]'),'clear')" class="inline-block bg-white text-teal-600 font-bold text-sm px-5 py-2.5 rounded-lg hover:scale-105 transition">Mua ngay →</a>
+          <span class="bg-white/20 text-white text-[10px] sm:text-xs font-bold px-2 py-1 rounded mb-1.5 sm:mb-2 inline-block">💎 GIÁ TỐT NHẤT</span>
+          <h1 class="text-lg sm:text-2xl md:text-3xl font-black leading-tight mt-0.5 sm:mt-1 mb-1.5 sm:mb-2">Ốp <em class="not-italic text-yellow-200">Trong Suốt</em><br class="hidden xs:block">Chống ố vàng 12 tháng</h1>
+          <p class="text-[11px] sm:text-sm opacity-90 mb-3 sm:mb-4 max-w-xs sm:max-w-md">TPU/PC cao cấp, khoe trọn thiết kế gốc. Chỉ từ 150K!</p>
+          <a href="#products" onclick="setType(document.querySelector('[data-type=clear]'),'clear')" class="inline-block bg-white text-teal-600 font-bold text-[11px] sm:text-sm px-4 sm:px-5 py-2 sm:py-2.5 rounded-lg hover:scale-105 transition">Mua ngay →</a>
         </div>
       </div>
     </div>
     <!-- Dots -->
-    <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+    <div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 sm:gap-2">
       <span class="slider-dot active" onclick="goSlide(0)"></span>
       <span class="slider-dot" onclick="goSlide(1)"></span>
       <span class="slider-dot" onclick="goSlide(2)"></span>
@@ -168,81 +166,77 @@ html{scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
   </div>
 
   <!-- ★ TRUST BADGES ★ -->
-  <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
-    <div class="bg-white rounded-xl p-3 text-center shadow-sm border border-gray-100"><div class="text-xl">🚚</div><div class="text-[11px] font-semibold">Miễn phí ship</div><div class="text-[10px] text-gray-400">đơn từ 200K</div></div>
-    <div class="bg-white rounded-xl p-3 text-center shadow-sm border border-gray-100"><div class="text-xl">🔄</div><div class="text-[11px] font-semibold">Đổi trả 7 ngày</div><div class="text-[10px] text-gray-400">miễn phí nếu lỗi</div></div>
-    <div class="bg-white rounded-xl p-3 text-center shadow-sm border border-gray-100"><div class="text-xl">⭐</div><div class="text-[11px] font-semibold">4.8★ (2.000+)</div><div class="text-[10px] text-gray-400">khách đánh giá</div></div>
-    <div class="bg-white rounded-xl p-3 text-center shadow-sm border border-gray-100"><div class="text-xl">🏭</div><div class="text-[11px] font-semibold">Xưởng trực tiếp</div><div class="text-[10px] text-gray-400">giá tốt không qua trung gian</div></div>
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 mb-4 sm:mb-5">
+    <div class="bg-white rounded-xl p-2.5 sm:p-3 text-center shadow-sm border border-gray-100"><div class="text-lg sm:text-xl">🚚</div><div class="text-[10px] sm:text-[11px] font-semibold">Free ship</div><div class="text-[9px] sm:text-[10px] text-gray-400">đơn ≥200K</div></div>
+    <div class="bg-white rounded-xl p-2.5 sm:p-3 text-center shadow-sm border border-gray-100"><div class="text-lg sm:text-xl">🔄</div><div class="text-[10px] sm:text-[11px] font-semibold">Đổi trả 7 ngày</div><div class="text-[9px] sm:text-[10px] text-gray-400">miễn phí</div></div>
+    <div class="bg-white rounded-xl p-2.5 sm:p-3 text-center shadow-sm border border-gray-100"><div class="text-lg sm:text-xl">⭐</div><div class="text-[10px] sm:text-[11px] font-semibold">4.8★ (2.000+)</div><div class="text-[9px] sm:text-[10px] text-gray-400">đánh giá</div></div>
+    <div class="bg-white rounded-xl p-2.5 sm:p-3 text-center shadow-sm border border-gray-100"><div class="text-lg sm:text-xl">🏭</div><div class="text-[10px] sm:text-[11px] font-semibold">Xưởng trực tiếp</div><div class="text-[9px] sm:text-[10px] text-gray-400">giá gốc</div></div>
   </div>
 
   <!-- ★ BEST SELLERS SLIDER ★ -->
-  <div class="mb-5">
-    <div class="flex items-center justify-between mb-2">
-      <h2 class="text-base sm:text-lg font-bold flex items-center gap-1">🏆 Bán chạy nhất</h2>
-      <span class="text-[10px] text-gray-400 pulse">Cập nhật liên tục</span>
+  <div class="mb-4 sm:mb-5">
+    <div class="flex items-center justify-between mb-1.5 sm:mb-2">
+      <h2 class="text-sm sm:text-lg font-bold flex items-center gap-1">🏆 Bán chạy nhất</h2>
+      <span class="text-[9px] sm:text-[10px] text-gray-400 pulse">Cập nhật liên tục</span>
     </div>
-    <div class="flex gap-3 overflow-x-auto pb-2 bs-scroll" id="bestSellers">
-      <!-- filled by JS -->
-    </div>
+    <div class="flex gap-2 sm:gap-3 overflow-x-auto pb-2 bs-scroll" id="bestSellers"></div>
   </div>
 
   <!-- ★ FLASH SALE ★ -->
-  <div class="bg-gradient-to-r from-hot via-red-500 to-orange-500 rounded-2xl p-4 sm:p-5 mb-5 text-white flash-glow" id="flashSale">
-    <div class="flex items-center gap-2 mb-3">
-      <span class="text-2xl">⚡</span>
-      <h2 class="text-base sm:text-lg font-black">FLASH SALE — GIẢM SỐC 30%</h2>
-      <span class="text-sm font-bold ml-auto">⏱️ <span id="countdown2">02:14:35</span></span>
+  <div class="bg-gradient-to-r from-hot via-red-500 to-orange-500 rounded-2xl p-3.5 sm:p-5 mb-4 sm:mb-5 text-white flash-glow" id="flashSale">
+    <div class="flex items-center gap-1.5 sm:gap-2 mb-2.5 sm:mb-3">
+      <span class="text-xl sm:text-2xl">⚡</span>
+      <h2 class="text-sm sm:text-lg font-black">FLASH SALE — GIẢM SỐC 30%</h2>
+      <span class="text-[11px] sm:text-sm font-bold ml-auto">⏱️ <span id="countdown2">02:14:35</span></span>
     </div>
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3" id="flashProducts">
-      <!-- filled by JS -->
-    </div>
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3" id="flashProducts"></div>
   </div>
 
   <!-- ★ ALL PRODUCTS ★ -->
-  <div class="flex items-center gap-2 mb-3" id="products">
-    <h2 class="text-base sm:text-lg font-bold">🛍️ Tất cả sản phẩm</h2>
-    <span id="countLabel" class="text-xs text-gray-400 font-normal"></span>
+  <div class="flex items-center gap-2 mb-2.5 sm:mb-3" id="products">
+    <h2 class="text-sm sm:text-lg font-bold">🛍️ Tất cả sản phẩm</h2>
+    <span id="countLabel" class="text-[11px] sm:text-xs text-gray-400 font-normal"></span>
   </div>
-  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 mb-6" id="pgrid"></div>
-  <div class="flex justify-center gap-1.5 mb-8" id="pagi"></div>
+  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2.5 sm:gap-4 mb-5 sm:mb-6" id="pgrid"></div>
+  <div class="flex justify-center gap-1.5 mb-6 sm:mb-8 flex-wrap" id="pagi"></div>
 
   <!-- ★ REVIEWS ★ -->
-  <h2 class="text-base sm:text-lg font-bold mb-3">⭐ Khách hàng nói gì?</h2>
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-8" id="rgrid"></div>
+  <h2 class="text-sm sm:text-lg font-bold mb-2.5 sm:mb-3">⭐ Khách hàng nói gì?</h2>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3 mb-6 sm:mb-8" id="rgrid"></div>
 
   <!-- ★ ABOUT ★ -->
-  <h2 class="text-base sm:text-lg font-bold mb-3">🏪 Về Ốp Xịn</h2>
-  <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 mb-4">
-    <div class="flex flex-col sm:flex-row gap-5">
-      <div class="flex-1 space-y-3">
-        <div><div class="text-xs font-bold text-gray-400 uppercase mb-1">📌 Địa chỉ</div><p class="text-sm font-medium">123 Nguyễn Văn Linh, Q.7, TP.HCM</p><p class="text-xs text-gray-400">(Gần Lotte Mart)</p></div>
-        <div><div class="text-xs font-bold text-gray-400 uppercase mb-1">🕐 Giờ mở cửa</div><p class="text-sm font-medium">8:00 — 21:00 (Thứ 2 — Chủ nhật)</p></div>
-        <div><div class="text-xs font-bold text-gray-400 uppercase mb-1">📞 Liên hệ</div><p class="text-sm"><a href="tel:0901234567" class="text-pri hover:underline font-medium">0901 234 567</a></p><p class="text-xs text-gray-400">Zalo / Email: hello@opxinp.vn</p></div>
+  <h2 class="text-sm sm:text-lg font-bold mb-2.5 sm:mb-3">🏪 Về Ốp Xịn</h2>
+  <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-gray-100 mb-3 sm:mb-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+      <div class="space-y-2.5 sm:space-y-3">
+        <div><div class="text-[10px] sm:text-xs font-bold text-gray-400 uppercase mb-0.5">📌 Địa chỉ</div><p class="text-xs sm:text-sm font-medium">123 Nguyễn Văn Linh, Q.7, TP.HCM</p><p class="text-[10px] sm:text-xs text-gray-400">(Gần Lotte Mart)</p></div>
+        <div><div class="text-[10px] sm:text-xs font-bold text-gray-400 uppercase mb-0.5">🕐 Giờ mở cửa</div><p class="text-xs sm:text-sm font-medium">8:00 — 21:00 (T2 — CN)</p></div>
+        <div><div class="text-[10px] sm:text-xs font-bold text-gray-400 uppercase mb-0.5">📞 Liên hệ</div><p class="text-xs sm:text-sm"><a href="tel:0901234567" class="text-pri hover:underline font-medium">0901 234 567</a></p><p class="text-[10px] sm:text-xs text-gray-400">hello@opxinp.vn</p></div>
       </div>
-      <div class="flex-1 space-y-3">
-        <div><div class="text-xs font-bold text-gray-400 uppercase mb-1">🚚 Giao hàng</div><p class="text-sm font-medium">Toàn quốc 1–3 ngày · Miễn phí ship đơn ≥200K</p></div>
-        <div><div class="text-xs font-bold text-gray-400 uppercase mb-1">💳 Thanh toán</div><p class="text-sm">Tiền mặt · Chuyển khoản · Momo · ZaloPay</p></div>
-        <div><div class="text-xs font-bold text-gray-400 uppercase mb-1">🌐 Mạng xã hội</div><div class="flex gap-3"><a href="#" class="text-sm text-pri hover:underline">Facebook</a><a href="#" class="text-sm text-pri hover:underline">Instagram</a><a href="#" class="text-sm text-pri hover:underline">TikTok</a></div></div>
+      <div class="space-y-2.5 sm:space-y-3">
+        <div><div class="text-[10px] sm:text-xs font-bold text-gray-400 uppercase mb-0.5">🚚 Giao hàng</div><p class="text-xs sm:text-sm font-medium">Toàn quốc 1–3 ngày · Free ship ≥200K</p></div>
+        <div><div class="text-[10px] sm:text-xs font-bold text-gray-400 uppercase mb-0.5">💳 Thanh toán</div><p class="text-xs sm:text-sm">Tiền mặt · CK · Momo · ZaloPay</p></div>
+        <div><div class="text-[10px] sm:text-xs font-bold text-gray-400 uppercase mb-0.5">🌐 MXH</div><div class="flex gap-3 text-xs sm:text-sm"><a href="#" class="text-pri hover:underline">Facebook</a><a href="#" class="text-pri hover:underline">Instagram</a><a href="#" class="text-pri hover:underline">TikTok</a></div></div>
       </div>
     </div>
   </div>
 
   <!-- ★ MAP ★ -->
-  <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 mb-4">
-    <iframe class="w-full h-48 sm:h-64" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3920.2!2d106.72!3d10.73!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTDCsDQzJzQ4LjAiTiAxMDbCsDQzJzEyLjAiRQ!5e0!3m2!1svi!2s!4v1" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+  <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 mb-3 sm:mb-4">
+    <iframe class="w-full h-40 sm:h-64" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3920.2!2d106.72!3d10.73!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTDCsDQzJzQ4LjAiTiAxMDbCsDQzJzEyLjAiRQ!5e0!3m2!1svi!2s!4v1" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
   </div>
 
   <!-- ★ FOOTER ★ -->
-  <footer class="bg-gray-900 text-gray-400 rounded-2xl p-6 text-center">
-    <div class="text-lg font-extrabold text-white mb-1">Ốp<span class="text-acc">Xịn</span></div>
-    <p class="text-sm mb-1">Ốp điện thoại đẳng cấp — Giá xưởng — Giao nhanh</p>
-    <p class="text-xs mb-2">123 Nguyễn Văn Linh, Q.7, TP.HCM · <a href="tel:0901234567" class="text-pri-light">0901 234 567</a></p>
-    <a href="https://zalo.me" target="_blank" class="inline-block bg-gradient-to-br from-pri to-acc text-white text-sm font-bold px-5 py-2.5 rounded-lg hover:opacity-90 transition mt-1">💬 Chat Zalo đặt hàng ngay</a>
-    <p class="text-[10px] mt-4">© 2026 Ốp Xịn — All rights reserved</p>
+  <footer class="bg-gray-900 text-gray-400 rounded-2xl p-5 sm:p-6 text-center">
+    <div class="text-base sm:text-lg font-extrabold text-white mb-1">Ốp<span class="text-acc">Xịn</span></div>
+    <p class="text-xs sm:text-sm mb-1">Ốp điện thoại đẳng cấp — Giá xưởng — Giao nhanh</p>
+    <p class="text-[10px] sm:text-xs mb-2">123 Nguyễn Văn Linh, Q.7, TP.HCM · <a href="tel:0901234567" class="text-pri-light">0901 234 567</a></p>
+    <a href="https://zalo.me" target="_blank" class="inline-block bg-gradient-to-br from-pri to-acc text-white text-xs sm:text-sm font-bold px-4 sm:px-5 py-2 sm:py-2.5 rounded-lg hover:opacity-90 transition mt-1">💬 Chat Zalo đặt hàng ngay</a>
+    <p class="text-[9px] sm:text-[10px] mt-4">© 2026 Ốp Xịn — All rights reserved</p>
   </footer>
 </main>
 
-<!-- ===== PRODUCT MODAL ===== -->
+<!-- ===== MODAL ===== -->
 <div class="modal-wrap fixed inset-0 bg-black/45 backdrop-blur-sm z-[200] hidden items-center justify-center p-4" id="modal" onclick="if(event.target===this)closeModal()">
   <div class="modal-box bg-white rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto relative modal-anim">
     <button class="sticky top-2.5 float-right z-10 w-8 h-8 -mb-8 rounded-full bg-black/5 hover:bg-black/10 text-lg flex items-center justify-center cursor-pointer border-none" onclick="closeModal()">✕</button>
@@ -267,10 +261,10 @@ var brands=[
 ];
 var types=[
   {id:'clear',name:'Trong Suốt',icon:'🫧',color:'from-cyan-100 to-cyan-200',desc:'Ốp trong suốt cao cấp, chất liệu TPU/PC chống ố vàng. Khoe trọn vẻ đẹp thiết kế gốc của máy. Bảo vệ toàn diện mà vẫn giữ nét sang trọng.'},
-  {id:'matte',name:'Nhám Cao Cấp',icon:'🖤',color:'from-gray-600 to-gray-500',desc:'Bề mặt nhám mịn cao cấp, không bám vân tay. Cầm nắm êm, chống trượt. Phủ nano siêu bền, màu không phai.'},
+  {id:'matte',name:'Nhám Cao Cấp',icon:'🖤',color:'from-gray-600 to-gray-500',desc:'Bề mặt nhám mịn cao cấp, không bám vân tay. Cầm nắm êm, chống trượt. Phủ nano siêu bền.'},
   {id:'silicone',name:'Silicone Mềm',icon:'🫠',color:'from-pink-200 to-pink-300',desc:'Silicone y tế an toàn, mềm mại ôm sát. Chống sốc hiệu quả. Trọng lượng nhẹ, không cồng kềnh.'},
-  {id:'leather',name:'Da Thật',icon:'👜',color:'from-amber-700 to-amber-600',desc:'Da thật cao cấp, khâu thủ công tỉ mỉ. Patina đẹp theo thời gian. Lớp lót microfiber bảo vệ lưng máy.'},
-  {id:'magsafe',name:'MagSafe',icon:'🧲',color:'from-violet-600 to-violet-400',desc:'Tương thích MagSafe, nam châm dính chặt. Sạc không dây nhanh chóng. Mỏng nhẹ, thiết kế tối giản.'},
+  {id:'leather',name:'Da Thật',icon:'👜',color:'from-amber-700 to-amber-600',desc:'Da thật cao cấp, khâu thủ công. Patina đẹp theo thời gian. Lớp lót microfiber bảo vệ lưng máy.'},
+  {id:'magsafe',name:'MagSafe',icon:'🧲',color:'from-violet-600 to-violet-400',desc:'Tương thích MagSafe, nam châm dính chặt. Sạc không dây nhanh. Mỏng nhẹ, thiết kế tối giản.'},
   {id:'armor',name:'Giáp Bảo Vệ',icon:'🛡️',color:'from-orange-500 to-amber-400',desc:'Kiểu giáp quân sự, chống rơi từ 2m. Góc bảo vệ khí nén. Vành màn hình cao 1.2mm.'},
   {id:'printed',name:'In Hình',icon:'🎨',color:'from-pink-500 to-pink-400',desc:'In UV chất lượng cao, màu rực rỡ. Phủ keo chống xước. Cá nhân hóa theo yêu cầu.'},
   {id:'carbon',name:'Carbon Fiber',icon:'🏁',color:'from-gray-700 to-gray-600',desc:'Sợi carbon thật, siêu nhẹ siêu cứng. Kết cấu tổ ong hấp thụ lực. Phong cách thể thao.'},
@@ -278,21 +272,19 @@ var types=[
   {id:'glitter',name:'Glitter Kim Tuyến',icon:'✨',color:'from-yellow-300 to-yellow-200',desc:'Kim tuyến lấp lánh trong suốt. Chất liệu resin cao cấp, không bong tróc.'},
 ];
 var reviews=[
-  {name:'Minh Anh',phone:'iPhone 15 Pro',type:'Nhám Cao Cấp',rating:5,text:'Ốp xịn thật! Cầm rất êm tay, không bám vân tay. Đóng gói đẹp, giao nhanh hơn dự kiến. Sẽ mua thêm cho máy phụ.'},
-  {name:'Hoàng Nam',phone:'Galaxy S24 Ultra',type:'Giáp Bảo Vệ',rating:5,text:'Rơi từ bàn xuống sàn 2 lần mà máy không xước! Giáp thật sự, không phải quảng cáo. 10 điểm!'},
-  {name:'Thu Hà',phone:'iPhone 14',type:'In Hình',rating:4,text:'In hình rất nét, màu không phai sau 3 tháng. Mỗi tội chờ giao hơi lâu nhưng đáng đồng tiền.'},
-  {name:'Đức Anh',phone:'Xiaomi 14',type:'Carbon Fiber',rating:5,text:'Nhẹ hơn mong đợi, cứng cáp. Cảm giác cầm rất thể thao. Bạn bè cứ hỏi ốp gì mà ngầu thế.'},
+  {name:'Minh Anh',phone:'iPhone 15 Pro',type:'Nhám Cao Cấp',rating:5,text:'Ốp xịn thật! Cầm rất êm, không bám vân tay. Đóng gói đẹp, giao nhanh hơn dự kiến. Sẽ mua thêm cho máy phụ.'},
+  {name:'Hoàng Nam',phone:'Galaxy S24 Ultra',type:'Giáp Bảo Vệ',rating:5,text:'Rơi từ bàn xuống sàn 2 lần mà máy không xước! Giáp thật, không phải quảng cáo. 10 điểm!'},
+  {name:'Thu Hà',phone:'iPhone 14',type:'In Hình',rating:4,text:'In hình rất nét, màu không phai sau 3 tháng. Chờ giao hơi lâu nhưng đáng tiền.'},
+  {name:'Đức Anh',phone:'Xiaomi 14',type:'Carbon Fiber',rating:5,text:'Nhẹ hơn mong đợi, cứng cáp. Cảm giác thể thao. Bạn bè ai cũng hỏi mua ở đâu.'},
   {name:'Ngọc Trâm',phone:'OPPO Reno 11',type:'Glitter Kim Tuyến',rating:5,text:'Lấp lánh dưới nắng quá đẹp! Đi tiệc ai cũng khen. Ship nhanh, giá tốt 😍'},
-  {name:'Văn Hùng',phone:'OnePlus 12',type:'Da Thật',rating:4,text:'Da mềm, đường khâu tỉ mỉ. Sang trọng hơn hẳn ốp nhựa. Sau 2 tháng lên patina rất đẹp.'},
-  {name:'Thùy Linh',phone:'iPhone 15 Pro Max',type:'MagSafe',rating:5,text:'Sạc MagSafe nam châm dính cực chặt, không lo rơi. Ốp mỏng nhẹ mà bảo vệ tốt. Rất hài lòng!'},
-  {name:'Quốc Bảo',phone:'Pixel 8 Pro',type:'Trong Suốt',rating:4,text:'Nhìn thấy lưng máy mà vẫn bảo vệ. Cam kết không ố vàng, sau 2 tháng đúng là chưa ố. Tin tưởng được.'},
-  {name:'Kim Ngân',phone:'iPhone 13 Pro',type:'Silicone Mềm',rating:5,text:'Ốp mềm mại, màu hồng pastel cực dễ thương. Lắp vào vừa khít, nút bấm vẫn nhạy như không có ốp.'},
+  {name:'Văn Hùng',phone:'OnePlus 12',type:'Da Thật',rating:4,text:'Da mềm, đường khâu tỉ mỉ. Sang hơn hẳn ốp nhựa. Sau 2 tháng lên patina rất đẹp.'},
+  {name:'Thùy Linh',phone:'iPhone 15 Pro Max',type:'MagSafe',rating:5,text:'Sạc MagSafe dính cực chặt. Ốp mỏng nhẹ mà bảo vệ tốt. Rất hài lòng!'},
+  {name:'Quốc Bảo',phone:'Pixel 8 Pro',type:'Trong Suốt',rating:4,text:'Nhìn rõ lưng máy mà vẫn bảo vệ. Cam kết không ố vàng, sau 2 tháng đúng là chưa ố.'},
+  {name:'Kim Ngân',phone:'iPhone 13 Pro',type:'Silicone Mềm',rating:5,text:'Ốp mềm mại, màu pastel dễ thương. Lắp vừa khít, nút bấm vẫn nhạy như không ốp.'},
 ];
 
-// Product price base
 var priceMap={leather:350000,carbon:300000,armor:250000,magsafe:280000,wood:320000,glitter:200000,printed:180000,matte:220000,silicone:120000,clear:150000};
 
-// Generate all products
 var products=[];
 var pid=1;
 brands.forEach(function(b){b.models.forEach(function(m){types.forEach(function(t){
@@ -312,11 +304,16 @@ brands.forEach(function(b){b.models.forEach(function(m){types.forEach(function(t
   });
 })})});
 
-// State
 var curBrand='',curType='',curSort='popular',curSearch='',curPage=1;
 var curSlide=0,totalSlides=3,slideTimer;
 
-// ========== SLIDER ==========
+// Update header spacer height dynamically
+function updateSpacer(){
+  var header=document.querySelector('.fixed.top-0');
+  if(header)document.getElementById('headerSpacer').style.height=header.offsetHeight+'px';
+}
+
+// ===== SLIDER =====
 function goSlide(n){
   curSlide=n;
   document.getElementById('sliderTrack').style.transform='translateX(-'+(n*100)+'%)';
@@ -324,10 +321,11 @@ function goSlide(n){
   resetSlideTimer();
 }
 function nextSlide(){goSlide((curSlide+1)%totalSlides)}
-function resetSlideTimer(){clearTimeout(slideTimer);slideTimer=setTimeout(function(){setInterval(nextSlide,5000)},5000)}
-resetSlideTimer();setInterval(nextSlide,5000);
+function resetSlideTimer(){clearTimeout(slideTimer);slideTimer=setTimeout(function(){nextSlide()},1000)}
+resetSlideTimer();
+var slideInterval=setInterval(function(){goSlide((curSlide+1)%totalSlides)},5000);
 
-// ========== COUNTDOWN ==========
+// ===== COUNTDOWN =====
 var cdEnd=new Date().getTime()+2*3600000+14*60000+35*1000;
 function updateCountdown(){
   var now=new Date().getTime(),d=Math.max(0,cdEnd-now);
@@ -338,7 +336,7 @@ function updateCountdown(){
 }
 setInterval(updateCountdown,1000);updateCountdown();
 
-// ========== FILTERS ==========
+// ===== FILTERS =====
 function setBrand(el,val){curBrand=val;curPage=1;document.querySelectorAll('[data-brand]').forEach(function(c){c.classList.toggle('active',c.dataset.brand===val)});loadProducts()}
 function setType(el,val){curType=val;curPage=1;document.querySelectorAll('[data-type]').forEach(function(c){c.classList.toggle('active',c.dataset.type===val)});loadProducts()}
 function filter(){curSearch=document.getElementById('searchInp').value;curSort=document.getElementById('sortSel').value;curPage=1;loadProducts()}
@@ -356,114 +354,103 @@ function applyFilters(arr){
   return r;
 }
 
-// ========== PRODUCT CARD HTML ==========
 function productCard(p,tiny){
   var h='';
   h+='<div class="pcard bg-white rounded-xl overflow-hidden cursor-pointer shadow-sm border border-gray-100 transition-all duration-300" onclick="openP('+p.id+')">';
-  h+='<div class="'+(tiny?'h-20':'h-28 sm:h-36')+' flex items-center justify-center text-2xl sm:text-3xl relative bg-gradient-to-br '+p.colorCls+'">';
+  h+='<div class="'+(tiny?'h-20 sm:h-24':'h-24 sm:h-36')+' flex items-center justify-center text-xl sm:text-3xl relative bg-gradient-to-br '+p.colorCls+'">';
   h+=p.typeIcon;
-  if(p.sold>300)h+='<span class="absolute top-1.5 right-1.5 bg-acc text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">Hot</span>';
-  if(p.discount>0)h+='<span class="absolute top-1.5 left-1.5 bg-hot text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">-'+p.discount+'%</span>';
-  if(p.viewers>10)h+='<span class="absolute bottom-1.5 right-1.5 bg-black/50 text-white text-[9px] px-1.5 py-0.5 rounded-full">👁 '+p.viewers+' đang xem</span>';
+  if(p.sold>300)h+='<span class="absolute top-1 sm:top-1.5 right-1 sm:right-1.5 bg-acc text-white text-[8px] sm:text-[9px] font-bold px-1 sm:px-1.5 py-0.5 rounded-full">Hot</span>';
+  if(p.discount>0)h+='<span class="absolute top-1 sm:top-1.5 left-1 sm:left-1.5 bg-hot text-white text-[8px] sm:text-[9px] font-bold px-1 sm:px-1.5 py-0.5 rounded-full">-'+p.discount+'%</span>';
+  if(!tiny&&p.viewers>10)h+='<span class="absolute bottom-1 sm:bottom-1.5 right-1 sm:right-1.5 bg-black/50 text-white text-[8px] sm:text-[9px] px-1 sm:px-1.5 py-0.5 rounded-full">👁 '+p.viewers+' đang xem</span>';
   h+='</div>';
   h+='<div class="p-2 sm:p-2.5">';
-  h+='<div class="text-[10px] text-pri font-bold uppercase tracking-wide">'+p.brandName+'</div>';
+  h+='<div class="text-[9px] sm:text-[10px] text-pri font-bold uppercase tracking-wide">'+p.brandName+'</div>';
   h+='<div class="text-[11px] sm:text-xs font-bold truncate">'+p.model+'</div>';
-  h+='<div class="text-[10px] text-gray-500">'+p.typeIcon+' '+p.typeName+'</div>';
-  if(!tiny)h+='<div class="text-[10px] text-gray-400 mt-0.5 line-clamp-1 leading-snug">'+p.shortDesc+'</div>';
-  h+='<div class="flex items-center justify-between mt-1.5">';
+  h+='<div class="text-[10px] sm:text-[11px] text-gray-500">'+p.typeIcon+' '+p.typeName+'</div>';
+  if(!tiny)h+='<div class="text-[9px] sm:text-[10px] text-gray-400 mt-0.5 line-clamp-1 leading-snug">'+p.shortDesc+'</div>';
+  h+='<div class="flex items-center justify-between mt-1 sm:mt-1.5">';
   h+='<div>';
-  if(p.discount>0)h+='<span class="text-[10px] text-gray-400 line-through">'+Math.round(p.originalPrice/1000)+'K</span> ';
-  h+='<span class="text-sm font-extrabold text-hot '+(p.discount>0?'':'text-pri-dark')+'">'+Math.round(p.price/1000)+'K</span></div>';
-  h+='<div class="text-[10px] text-gray-400">★'+p.rating+'</div>';
+  if(p.discount>0)h+='<span class="text-[9px] sm:text-[10px] text-gray-400 line-through">'+Math.round(p.originalPrice/1000)+'K</span> ';
+  h+='<span class="text-xs sm:text-sm font-extrabold '+(p.discount>0?'text-hot':'text-pri-dark')+'">'+Math.round(p.price/1000)+'K</span></div>';
+  h+='<div class="text-[9px] sm:text-[10px] text-gray-400">★'+p.rating+'</div>';
   h+='</div></div></div>';
   return h;
 }
 
-// ========== BEST SELLERS ==========
 function loadBestSellers(){
   var top=products.slice().sort(function(a,b){return b.sold-a.sold}).slice(0,10);
   document.getElementById('bestSellers').innerHTML=top.map(function(p){
-    return '<div class="shrink-0 w-36 sm:w-40">'+productCard(p,true)+'</div>';
+    return '<div class="shrink-0 w-32 sm:w-40">'+productCard(p,true)+'</div>';
   }).join('');
 }
 
-// ========== FLASH SALE ==========
 function loadFlashSale(){
   var flash=products.filter(function(p){return p.discount>30}).sort(function(a,b){return b.discount-a.discount}).slice(0,8);
   var h='';
   flash.forEach(function(p){
     h+='<div class="bg-white/10 backdrop-blur rounded-xl p-2 sm:p-3 cursor-pointer hover:bg-white/20 transition" onclick="openP('+p.id+')">';
-    h+='<div class="text-xl text-center mb-1">'+p.typeIcon+'</div>';
-    h+='<div class="text-[10px] font-semibold truncate">'+p.model+'</div>';
+    h+='<div class="text-lg sm:text-xl text-center mb-1">'+p.typeIcon+'</div>';
+    h+='<div class="text-[10px] sm:text-xs font-semibold truncate">'+p.model+'</div>';
     h+='<div class="flex items-center gap-1 mt-1">';
-    h+='<span class="text-xs font-black">'+Math.round(p.price/1000)+'K</span>';
-    h+='<span class="text-[10px] line-through opacity-70">'+Math.round(p.originalPrice/1000)+'K</span>';
-    h+='<span class="text-[9px] ml-auto bg-white text-hot font-bold px-1 rounded">-'+p.discount+'%</span>';
+    h+='<span class="text-[11px] sm:text-xs font-black">'+Math.round(p.price/1000)+'K</span>';
+    h+='<span class="text-[9px] sm:text-[10px] line-through opacity-70">'+Math.round(p.originalPrice/1000)+'K</span>';
+    h+='<span class="text-[8px] sm:text-[9px] ml-auto bg-white text-hot font-bold px-1 rounded">-'+p.discount+'%</span>';
     h+='</div></div>';
   });
-  document.getElementById('flashProducts').innerHTML=h||'<p class="text-sm col-span-full text-center">Đang cập nhật sản phẩm flash sale...</p>';
+  document.getElementById('flashProducts').innerHTML=h||'<p class="text-xs sm:text-sm col-span-full text-center opacity-70">Đang cập nhật...</p>';
 }
 
-// ========== ALL PRODUCTS ==========
 function loadProducts(){
   var r=applyFilters(products);
   var total=r.length,per=20,pages=Math.ceil(total/per),page=Math.min(curPage,pages||1);
   r=r.slice((page-1)*per,page*per);
   document.getElementById('countLabel').textContent='('+total+')';
   document.getElementById('pgrid').innerHTML=r.map(function(p){return productCard(p,false)}).join('');
-
   var pagi=document.getElementById('pagi');
   if(pages<=1){pagi.innerHTML='';return}
   var ph='';
   for(var i=1;i<=pages;i++){
-    ph+='<button class="px-3 py-1.5 text-xs font-semibold rounded-lg border cursor-pointer transition-all duration-150 '+(i===page?'bg-pri text-white border-pri':'bg-white border-gray-200 hover:border-pri')+'" onclick="goPage('+i+')">'+i+'</button>';
+    ph+='<button class="px-2.5 sm:px-3 py-1 sm:py-1.5 text-[11px] sm:text-xs font-semibold rounded-lg border cursor-pointer transition-all duration-150 '+(i===page?'bg-pri text-white border-pri':'bg-white border-gray-200 hover:border-pri')+'" onclick="goPage('+i+')">'+i+'</button>';
   }
   pagi.innerHTML=ph;
 }
 function goPage(p){curPage=p;loadProducts();window.scrollTo({top:300,behavior:'smooth'})}
 
-// ========== MODAL ==========
 function openP(id){
   var p=products.find(function(x){return x.id===id});if(!p)return;
   var prev=reviews.filter(function(r){return r.type===p.typeName});
   var h='';
-  h+='<div class="h-40 flex items-center justify-center text-5xl bg-gradient-to-br '+p.colorCls+'">'+p.typeIcon+'</div>';
-  h+='<div class="p-5">';
-  h+='<div class="text-[11px] text-pri font-bold uppercase tracking-wider">'+p.brandName+'</div>';
-  h+='<div class="text-lg font-extrabold mt-0.5">'+p.model+'</div>';
-  h+='<div class="text-sm text-gray-500 mb-2">'+p.typeIcon+' '+p.typeName+'</div>';
-  h+='<div class="text-xs text-gray-500 leading-relaxed bg-gray-50 p-2.5 rounded-lg mb-3">'+p.desc+'</div>';
+  h+='<div class="h-36 sm:h-40 flex items-center justify-center text-4xl sm:text-5xl bg-gradient-to-br '+p.colorCls+'">'+p.typeIcon+'</div>';
+  h+='<div class="p-4 sm:p-5">';
+  h+='<div class="text-[10px] sm:text-[11px] text-pri font-bold uppercase tracking-wider">'+p.brandName+'</div>';
+  h+='<div class="text-base sm:text-lg font-extrabold mt-0.5">'+p.model+'</div>';
+  h+='<div class="text-xs sm:text-sm text-gray-500 mb-2">'+p.typeIcon+' '+p.typeName+'</div>';
+  h+='<div class="text-[11px] sm:text-xs text-gray-500 leading-relaxed bg-gray-50 p-2.5 rounded-lg mb-3">'+p.desc+'</div>';
 
-  // Price with urgency
   h+='<div class="flex items-baseline gap-2 mb-1">';
-  if(p.discount>0){h+='<span class="text-sm text-gray-400 line-through">'+p.originalPrice.toLocaleString('vi-VN')+'₫</span>';}
-  h+='<span class="text-2xl font-extrabold text-hot">'+p.price.toLocaleString('vi-VN')+'₫</span>';
-  if(p.discount>0){h+='<span class="text-xs bg-hot text-white font-bold px-1.5 py-0.5 rounded">-'+p.discount+'%</span>';}
+  if(p.discount>0)h+='<span class="text-xs sm:text-sm text-gray-400 line-through">'+p.originalPrice.toLocaleString('vi-VN')+'₫</span>';
+  h+='<span class="text-xl sm:text-2xl font-extrabold text-hot">'+p.price.toLocaleString('vi-VN')+'₫</span>';
+  if(p.discount>0)h+='<span class="text-[10px] sm:text-xs bg-hot text-white font-bold px-1.5 py-0.5 rounded">-'+p.discount+'%</span>';
   h+='</div>';
 
-  // Social proof
-  h+='<div class="flex items-center gap-3 text-[11px] text-gray-400 mb-3">';
+  h+='<div class="flex items-center gap-2 sm:gap-3 text-[10px] sm:text-[11px] text-gray-400 mb-3 flex-wrap">';
   h+='<span>⭐ '+p.rating+'</span><span>📦 '+p.sold+' đã bán</span><span class="text-hot pulse">👁 '+p.viewers+' đang xem</span>';
   h+='</div>';
 
-  // Details grid
   h+='<div class="grid grid-cols-2 gap-2 mb-3">';
-  h+='<div class="bg-gray-50 p-2 rounded-lg"><div class="text-[10px] text-gray-400 font-semibold uppercase">Hãng</div><div class="text-sm font-bold">'+p.brandName+'</div></div>';
-  h+='<div class="bg-gray-50 p-2 rounded-lg"><div class="text-[10px] text-gray-400 font-semibold uppercase">Loại ốp</div><div class="text-sm font-bold">'+p.typeName+'</div></div>';
-  h+='<div class="bg-gray-50 p-2 rounded-lg"><div class="text-[10px] text-gray-400 font-semibold uppercase">Tình trạng</div><div class="text-sm font-bold text-green-600">Còn hàng</div></div>';
-  h+='<div class="bg-gray-50 p-2 rounded-lg"><div class="text-[10px] text-gray-400 font-semibold uppercase">Giao hàng</div><div class="text-sm font-bold">1–3 ngày</div></div>';
+  h+='<div class="bg-gray-50 p-2 rounded-lg"><div class="text-[9px] sm:text-[10px] text-gray-400 font-semibold uppercase">Hãng</div><div class="text-xs sm:text-sm font-bold">'+p.brandName+'</div></div>';
+  h+='<div class="bg-gray-50 p-2 rounded-lg"><div class="text-[9px] sm:text-[10px] text-gray-400 font-semibold uppercase">Loại ốp</div><div class="text-xs sm:text-sm font-bold">'+p.typeName+'</div></div>';
+  h+='<div class="bg-gray-50 p-2 rounded-lg"><div class="text-[9px] sm:text-[10px] text-gray-400 font-semibold uppercase">Tình trạng</div><div class="text-xs sm:text-sm font-bold text-green-600">Còn hàng</div></div>';
+  h+='<div class="bg-gray-50 p-2 rounded-lg"><div class="text-[9px] sm:text-[10px] text-gray-400 font-semibold uppercase">Giao hàng</div><div class="text-xs sm:text-sm font-bold">1–3 ngày</div></div>';
   h+='</div>';
 
-  // CTA
-  h+='<a class="block text-center py-3 rounded-lg bg-gradient-to-br from-hot to-orange-500 text-white font-bold text-sm mb-2 hover:scale-[1.02] transition shadow-lg shadow-hot/20" href="https://zalo.me" target="_blank">⚡ Đặt mua ngay qua Zalo — Giảm '+p.discount+'%</a>';
-  h+='<p class="text-[10px] text-center text-gray-400 mb-3">💬 Nhắn tin Zalo trong 5 phút — giữ giá sale cho bạn</p>';
+  h+='<a class="block text-center py-2.5 sm:py-3 rounded-lg bg-gradient-to-br from-hot to-orange-500 text-white font-bold text-xs sm:text-sm mb-2 hover:scale-[1.02] transition shadow-lg shadow-hot/20" href="https://zalo.me" target="_blank">⚡ Đặt mua ngay qua Zalo — Giảm '+p.discount+'%</a>';
+  h+='<p class="text-[9px] sm:text-[10px] text-center text-gray-400 mb-3">💬 Nhắn Zalo trong 5 phút để giữ giá sale</p>';
 
-  // Related reviews
   if(prev.length){
-    h+='<div class="font-bold text-sm mb-2">Đánh giá từ khách</div>';
+    h+='<div class="font-bold text-xs sm:text-sm mb-2">Đánh giá từ khách</div>';
     prev.slice(0,3).forEach(function(r){
-      h+='<div class="bg-gray-50 p-2.5 rounded-lg mb-2"><strong class="text-xs">'+r.name+'</strong> <span class="text-yellow-500 text-xs">'+('★'.repeat(r.rating))+'</span><br><span class="text-[11px] text-gray-500">'+r.text+'</span></div>';
+      h+='<div class="bg-gray-50 p-2 sm:p-2.5 rounded-lg mb-2"><strong class="text-[11px] sm:text-xs">'+r.name+'</strong> <span class="text-yellow-500 text-[10px] sm:text-xs">'+('★'.repeat(r.rating))+'</span><br><span class="text-[10px] sm:text-[11px] text-gray-500">'+r.text+'</span></div>';
     });
   }
   h+='</div>';
@@ -476,26 +463,30 @@ function closeModal(){
   document.getElementById('modal').classList.remove('flex');
 }
 
-// ========== REVIEWS ==========
+// Reviews
 (function(){
   var h='';
   reviews.forEach(function(r){
-    h+='<div class="bg-white rounded-xl p-3.5 shadow-sm border border-gray-100">';
-    h+='<div class="flex items-center gap-2.5 mb-1.5">';
-    h+='<div class="w-8 h-8 rounded-full bg-gradient-to-br from-pri to-acc flex items-center justify-center text-white font-bold text-xs shrink-0">'+r.name[0]+'</div>';
-    h+='<div><div class="font-semibold text-sm">'+r.name+'</div><div class="text-[10px] text-gray-400">'+r.phone+' · '+r.type+'</div></div>';
+    h+='<div class="bg-white rounded-xl p-3 sm:p-3.5 shadow-sm border border-gray-100">';
+    h+='<div class="flex items-center gap-2 sm:gap-2.5 mb-1 sm:mb-1.5">';
+    h+='<div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-pri to-acc flex items-center justify-center text-white font-bold text-[11px] sm:text-xs shrink-0">'+r.name[0]+'</div>';
+    h+='<div><div class="font-semibold text-xs sm:text-sm">'+r.name+'</div><div class="text-[9px] sm:text-[10px] text-gray-400">'+r.phone+' · '+r.type+'</div></div>';
     h+='</div>';
-    h+='<div class="text-yellow-500 text-xs mb-1">'+('★'.repeat(r.rating))+('☆'.repeat(5-r.rating))+'</div>';
-    h+='<div class="text-xs text-gray-500 leading-relaxed">'+r.text+'</div>';
+    h+='<div class="text-yellow-500 text-[10px] sm:text-xs mb-1">'+('★'.repeat(r.rating))+('☆'.repeat(5-r.rating))+'</div>';
+    h+='<div class="text-[11px] sm:text-xs text-gray-500 leading-relaxed">'+r.text+'</div>';
     h+='</div>';
   });
   document.getElementById('rgrid').innerHTML=h;
 })();
 
-// ========== INIT ==========
+// Init
 loadBestSellers();
 loadFlashSale();
 loadProducts();
+updateSpacer();
+
+// Recalculate spacer on resize
+window.addEventListener('resize',updateSpacer);
 </script>
 </body>
 </html>
