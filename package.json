@@ -1,0 +1,13 @@
+{
+  "name": "op-xin",
+  "version": "1.0.0",
+  "description": "Ốp Xịn - Showcase ốp điện thoại đẳng cấp",
+  "scripts": {
+    "dev": "node server.js",
+    "build": "echo 'Static build done'",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
