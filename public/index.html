@@ -9,132 +9,136 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --pri:#6c5ce7;--pri-l:#a29bfe;--pri-d:#4834d4;--pri-bg:rgba(108,92,231,.06);
+  --pri:#6c5ce7;--pri-l:#a29bfe;--pri-d:#4834d4;--pri-bg:rgba(108,92,231,.08);
   --acc:#e84393;--acc-l:#fd79a8;
   --bg:#fafafe;--card:#fff;--side:#0f0e1a;
   --txt:#1a1a2e;--txt2:#6b7280;--txt3:#9ca3af;
   --r:12px;--rs:8px;
-  --sh:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
-  --sh2:0 4px 14px rgba(0,0,0,.08);
+  --sh:0 1px 3px rgba(0,0,0,.06);
+  --sh2:0 4px 14px rgba(0,0,0,.1);
 }
 html{scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
 body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--txt);overflow-x:hidden;line-height:1.6}
 a{text-decoration:none;color:inherit}
 
-/* NAV */
-.navbar{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--card);border-bottom:1px solid rgba(0,0,0,.06);padding:0 24px;height:60px;display:flex;align-items:center;gap:16px}
-.navbar .logo{font-weight:800;font-size:20px;color:var(--pri);letter-spacing:-.5px;white-space:nowrap}
-.navbar .logo span{color:var(--acc)}
-.nav-filters{display:flex;align-items:center;gap:8px;flex:1;overflow-x:auto;scrollbar-width:none;padding:4px 0}
-.nav-filters::-webkit-scrollbar{display:none}
-.nav-select{padding:7px 28px 7px 10px;border:1px solid #e5e7eb;border-radius:var(--rs);font:500 13px 'Inter',sans-serif;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%236b7280'/%3E%3C/svg%3E") no-repeat right 8px center;-webkit-appearance:none;cursor:pointer;white-space:nowrap;flex-shrink:0}
-.nav-select:focus{outline:none;border-color:var(--pri)}
-.nav-search{padding:7px 12px 7px 32px;border:1px solid #e5e7eb;border-radius:var(--rs);font:400 13px 'Inter',sans-serif;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%239ca3af'%3E%3Ccircle cx='6' cy='6' r='5.5' fill='none' stroke='%239ca3af' stroke-width='1.5'/%3E%3Cline x1='10' y1='10' x2='13' y2='13' stroke='%239ca3af' stroke-width='1.5'/%3E%3C/svg%3E") no-repeat 8px center;min-width:160px;flex-shrink:0}
-.nav-search:focus{outline:none;border-color:var(--pri);min-width:200px}
-.zalo-btn{display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--rs);background:linear-gradient(135deg,var(--pri),var(--acc));color:#fff;font:600 13px 'Inter',sans-serif;white-space:nowrap;flex-shrink:0;cursor:pointer;border:none;transition:opacity .2s}
+/* NAVBAR */
+.navbar{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--card);border-bottom:1px solid rgba(0,0,0,.06);height:56px;display:flex;align-items:center;padding:0 16px;gap:12px}
+.logo{font-weight:800;font-size:20px;color:var(--pri);white-space:nowrap;letter-spacing:-.5px}
+.logo span{color:var(--acc)}
+.nav-search{flex:1;min-width:0;position:relative}
+.nav-search input{width:100%;padding:8px 12px 8px 34px;border:1px solid #e5e7eb;border-radius:var(--rs);font:400 13px 'Inter',sans-serif;background:#fff}
+.nav-search input:focus{outline:none;border-color:var(--pri)}
+.nav-search::before{content:'🔍';position:absolute;left:8px;top:50%;transform:translateY(-50%);font-size:14px;pointer-events:none}
+.sort-sel{padding:8px 24px 8px 10px;border:1px solid #e5e7eb;border-radius:var(--rs);font:500 13px 'Inter',sans-serif;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%236b7280'/%3E%3C/svg%3E") no-repeat right 8px center;-webkit-appearance:none;cursor:pointer;white-space:nowrap;flex-shrink:0}
+.sort-sel:focus{outline:none;border-color:var(--pri)}
+.zalo-btn{display:flex;align-items:center;gap:4px;padding:8px 14px;border-radius:var(--rs);background:linear-gradient(135deg,var(--pri),var(--acc));color:#fff;font:600 12px 'Inter',sans-serif;white-space:nowrap;cursor:pointer;border:none;flex-shrink:0}
 .zalo-btn:hover{opacity:.9}
-.menu-toggle{display:none;background:none;border:none;font-size:22px;cursor:pointer;color:var(--txt)}
+
+/* FILTER CHIPS - always visible, horizontal scroll */
+.filter-bar{position:fixed;top:56px;left:0;right:0;z-index:99;background:var(--card);border-bottom:1px solid rgba(0,0,0,.06);padding:8px 16px;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
+.filter-bar::-webkit-scrollbar{display:none}
+.filter-label{font-size:11px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.5px;padding:6px 0;white-space:nowrap;display:flex;align-items:center}
+.chip{padding:6px 12px;border-radius:20px;font:500 12px 'Inter',sans-serif;border:1px solid #e5e7eb;background:#fff;cursor:pointer;white-space:nowrap;transition:all .15s;user-select:none;flex-shrink:0}
+.chip:hover{border-color:var(--pri-l);background:var(--pri-bg)}
+.chip.active{background:var(--pri);color:#fff;border-color:var(--pri)}
+.chip-sep{width:1px;background:#e5e7eb;flex-shrink:0;margin:0 4px}
 
 /* MAIN */
-.main{padding:72px 24px 40px;max-width:1200px;margin:0 auto}
+.main{padding:104px 16px 40px;max-width:1200px;margin:0 auto}
 
 /* HERO */
-.hero{background:linear-gradient(135deg,var(--pri-d),var(--pri),var(--acc));border-radius:16px;padding:40px 36px;margin-bottom:32px;color:#fff;position:relative;overflow:hidden}
-.hero::after{content:'';position:absolute;right:-40px;top:-40px;width:200px;height:200px;background:rgba(255,255,255,.07);border-radius:50%}
-.hero h1{font-size:28px;font-weight:800;line-height:1.25;margin-bottom:8px}
+.hero{background:linear-gradient(135deg,var(--pri-d),var(--pri),var(--acc));border-radius:16px;padding:32px 28px;margin-bottom:24px;color:#fff;position:relative;overflow:hidden}
+.hero::after{content:'';position:absolute;right:-30px;top:-30px;width:160px;height:160px;background:rgba(255,255,255,.07);border-radius:50%}
+.hero h1{font-size:24px;font-weight:800;line-height:1.3;margin-bottom:6px}
 .hero h1 em{font-style:normal;color:#ffeaa7}
-.hero p{font-size:14px;opacity:.85;max-width:480px;margin-bottom:20px}
-.hero-stats{display:flex;gap:24px;flex-wrap:wrap}
-.hero-stat .num{font-size:22px;font-weight:800}
-.hero-stat .label{font-size:11px;opacity:.7}
+.hero p{font-size:13px;opacity:.85;max-width:460px;margin-bottom:16px}
+.hero-stats{display:flex;gap:20px;flex-wrap:wrap}
+.hero-stat .num{font-size:20px;font-weight:800}
+.hero-stat .label{font-size:10px;opacity:.7}
 
 /* SECTION */
-.sec-title{font-size:18px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px}
-.sec-title span{font-size:20px}
+.sec-title{font-size:16px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:6px}
 
 /* PRODUCT GRID */
-.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:32px}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-bottom:24px}
 .pcard{background:var(--card);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:all .2s;box-shadow:var(--sh);border:1px solid rgba(0,0,0,.04)}
 .pcard:hover{box-shadow:var(--sh2);transform:translateY(-2px)}
-.pcard-img{height:160px;display:flex;align-items:center;justify-content:center;font-size:48px;position:relative}
-.pcard-badge{position:absolute;top:8px;right:8px;background:var(--acc);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px}
-.pcard-body{padding:12px}
+.pcard-img{height:150px;display:flex;align-items:center;justify-content:center;font-size:44px;position:relative}
+.pcard-badge{position:absolute;top:6px;right:6px;background:var(--acc);color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:12px}
+.pcard-body{padding:10px 12px 12px}
 .pcard-brand{font-size:10px;color:var(--pri);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
-.pcard-model{font-size:13px;font-weight:700;margin:2px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pcard-model{font-size:13px;font-weight:700;margin:1px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pcard-type{font-size:11px;color:var(--txt2)}
+.pcard-desc{font-size:10px;color:var(--txt3);margin-top:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.4}
 .pcard-foot{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
 .pcard-price{font-size:16px;font-weight:800;color:var(--pri-d)}
 .pcard-meta{font-size:10px;color:var(--txt3)}
 
 /* REVIEWS */
-.rgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:32px}
-.rcard{background:var(--card);border-radius:var(--r);padding:16px;box-shadow:var(--sh);border:1px solid rgba(0,0,0,.04)}
-.rcard-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-.rcard-av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--pri),var(--acc));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px}
+.rgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:24px}
+.rcard{background:var(--card);border-radius:var(--r);padding:14px;box-shadow:var(--sh);border:1px solid rgba(0,0,0,.04)}
+.rcard-top{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.rcard-av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--pri),var(--acc));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:12px;flex-shrink:0}
 .rcard-name{font-weight:600;font-size:13px}
 .rcard-info{font-size:11px;color:var(--txt3)}
 .rcard-stars{color:#f59e0b;font-size:12px;margin-bottom:4px}
-.rcard-text{font-size:12px;line-height:1.6;color:var(--txt2)}
+.rcard-text{font-size:12px;line-height:1.5;color:var(--txt2)}
 
 /* MODAL */
 .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:none;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(2px)}
 .modal-bg.show{display:flex}
-.modal{background:var(--card);border-radius:16px;max-width:500px;width:100%;max-height:90vh;overflow-y:auto;position:relative;animation:mIn .25s ease}
+.modal{background:var(--card);border-radius:16px;max-width:480px;width:100%;max-height:90vh;overflow-y:auto;position:relative;animation:mIn .25s ease}
 @keyframes mIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
-.modal-x{position:absolute;top:12px;right:12px;background:rgba(0,0,0,.05);border:none;width:32px;height:32px;border-radius:50%;font-size:18px;cursor:pointer;z-index:1}
-.modal-img{height:180px;display:flex;align-items:center;justify-content:center;font-size:64px}
-.modal-body{padding:20px}
+.modal-x{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.05);border:none;width:30px;height:30px;border-radius:50%;font-size:18px;cursor:pointer;z-index:1}
+.modal-img{height:160px;display:flex;align-items:center;justify-content:center;font-size:56px}
+.modal-body{padding:18px}
 .modal-brand{font-size:11px;color:var(--pri);font-weight:700;text-transform:uppercase;letter-spacing:1px}
-.modal-model{font-size:20px;font-weight:800;margin:2px 0 4px}
-.modal-type{font-size:13px;color:var(--txt2);margin-bottom:16px}
-.modal-price{font-size:24px;font-weight:800;color:var(--pri-d);margin-bottom:16px}
-.modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
-.modal-cell{background:var(--bg);padding:10px;border-radius:var(--rs)}
+.modal-model{font-size:18px;font-weight:800;margin:2px 0 4px}
+.modal-type{font-size:13px;color:var(--txt2);margin-bottom:8px}
+.modal-desc{font-size:12px;color:var(--txt2);line-height:1.6;margin-bottom:12px;padding:10px;background:var(--bg);border-radius:var(--rs)}
+.modal-price{font-size:22px;font-weight:800;color:var(--pri-d);margin-bottom:12px}
+.modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.modal-cell{background:var(--bg);padding:8px;border-radius:var(--rs)}
 .modal-cell .lbl{font-size:10px;color:var(--txt3);font-weight:600;text-transform:uppercase}
-.modal-cell .val{font-size:14px;font-weight:700}
-.modal-zalo{display:block;text-align:center;padding:12px;border-radius:var(--rs);background:linear-gradient(135deg,var(--pri),var(--acc));color:#fff;font-weight:700;font-size:15px;text-decoration:none;margin-bottom:16px}
+.modal-cell .val{font-size:13px;font-weight:700}
+.modal-zalo{display:block;text-align:center;padding:12px;border-radius:var(--rs);background:linear-gradient(135deg,var(--pri),var(--acc));color:#fff;font-weight:700;font-size:14px;text-decoration:none;margin-bottom:14px}
 
 /* PAGINATION */
-.pagi{display:flex;justify-content:center;gap:6px;margin-bottom:32px}
-.pagi button{padding:8px 14px;border-radius:var(--rs);border:1px solid #e5e7eb;background:#fff;font:600 13px 'Inter',sans-serif;cursor:pointer;transition:all .15s}
+.pagi{display:flex;justify-content:center;gap:4px;margin-bottom:24px}
+.pagi button{padding:6px 12px;border-radius:var(--rs);border:1px solid #e5e7eb;background:#fff;font:600 12px 'Inter',sans-serif;cursor:pointer;transition:all .15s}
 .pagi button:hover,.pagi button.active{background:var(--pri);color:#fff;border-color:var(--pri)}
 
 /* FOOTER */
-.footer{background:var(--side);color:rgba(255,255,255,.5);padding:32px 24px;border-radius:16px;text-align:center;margin-top:24px}
-.footer .f-logo{font-size:20px;font-weight:800;color:#fff;margin-bottom:4px}
+.footer{background:var(--side);color:rgba(255,255,255,.5);padding:28px 20px;border-radius:14px;text-align:center;margin-top:16px}
+.footer .f-logo{font-size:18px;font-weight:800;color:#fff;margin-bottom:4px}
 .footer .f-logo span{color:var(--acc)}
-
-/* MOBILE DRAWER FILTER */
-.drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:150;display:none;backdrop-filter:blur(2px)}
-.drawer-overlay.show{display:block}
-.drawer{position:fixed;top:0;right:-280px;width:280px;height:100%;background:#fff;z-index:160;padding:20px;overflow-y:auto;transition:right .3s ease;box-shadow:-4px 0 20px rgba(0,0,0,.1)}
-.drawer.open{right:0}
-.drawer h3{font-size:16px;font-weight:700;margin-bottom:16px}
-.drawer label{font-size:12px;font-weight:600;color:var(--txt2);display:block;margin:12px 0 4px}
-.drawer select{width:100%;padding:8px 10px;border:1px solid #e5e7eb;border-radius:var(--rs);font:500 13px 'Inter',sans-serif;background:#fff}
-.drawer-close{position:absolute;top:12px;right:12px;background:none;border:none;font-size:20px;cursor:pointer}
 
 /* RESPONSIVE */
 @media(max-width:768px){
-  .navbar{padding:0 12px;height:52px;gap:8px}
-  .nav-filters{display:none}
-  .nav-search{display:none}
-  .zalo-btn{margin-left:auto}
-  .menu-toggle{display:block}
-  .main{padding:60px 12px 24px}
-  .hero{padding:24px 16px;border-radius:12px;margin-bottom:20px}
-  .hero h1{font-size:20px}
-  .hero p{font-size:13px}
-  .hero-stat .num{font-size:18px}
+  .navbar{gap:8px;padding:0 10px}
+  .filter-bar{padding:6px 10px;gap:6px}
+  .chip{padding:5px 10px;font-size:11px}
+  .main{padding:96px 10px 24px}
+  .hero{padding:20px 16px;border-radius:12px}
+  .hero h1{font-size:18px}
+  .hero p{font-size:12px}
+  .hero-stat .num{font-size:16px}
   .pgrid{grid-template-columns:repeat(2,1fr);gap:10px}
-  .pcard-img{height:120px;font-size:36px}
+  .pcard-img{height:110px;font-size:32px}
   .pcard-model{font-size:12px}
   .pcard-price{font-size:14px}
+  .pcard-desc{display:none}
   .rgrid{grid-template-columns:1fr}
-  .sec-title{font-size:15px}
+  .sec-title{font-size:14px}
+  .modal{max-width:100%;border-radius:14px 14px 0 0;margin-top:auto;max-height:85vh}
+  .modal-bg{align-items:flex-end;padding:0}
 }
-@media(min-width:769px){
-  .drawer-overlay,.drawer,.menu-toggle{display:none!important}
+@media(max-width:360px){
+  .logo{font-size:17px}
+  .zalo-btn span{display:none}
+  .pgrid{grid-template-columns:repeat(2,1fr);gap:8px}
+  .pcard-body{padding:8px}
+  .pcard-price{font-size:13px}
 }
 </style>
 </head>
@@ -143,44 +147,49 @@ a{text-decoration:none;color:inherit}
 <!-- NAVBAR -->
 <nav class="navbar">
   <a class="logo" href="#">Ốp<span>Xịn</span></a>
-  <div class="nav-filters">
-    <select class="nav-select" id="brandSel" onchange="filter()"><option value="">Tất cả hãng</option></select>
-    <select class="nav-select" id="typeSel" onchange="filter()"><option value="">Tất cả loại</option></select>
-    <select class="nav-select" id="sortSel" onchange="filter()">
-      <option value="popular">🔥 Phổ biến</option>
-      <option value="price-asc">💰 Giá tăng</option>
-      <option value="price-desc">💎 Giá giảm</option>
-      <option value="rating">⭐ Đánh giá</option>
-    </select>
-    <input class="nav-search" id="searchInp" placeholder="Tìm sản phẩm..." oninput="filter()">
-  </div>
-  <a class="zalo-btn" href="https://zalo.me" target="_blank">💬 Zalo</a>
-  <button class="menu-toggle" onclick="toggleDrawer()">☰</button>
-</nav>
-
-<!-- MOBILE FILTER DRAWER -->
-<div class="drawer-overlay" id="drawerBg" onclick="toggleDrawer()"></div>
-<div class="drawer" id="drawer">
-  <button class="drawer-close" onclick="toggleDrawer()">✕</button>
-  <h3>Bộ lọc</h3>
-  <label>Hãng điện thoại</label>
-  <select id="mBrandSel" onchange="applyDrawer()"><option value="">Tất cả</option></select>
-  <label>Loại ốp</label>
-  <select id="mTypeSel" onchange="applyDrawer()"><option value="">Tất cả</option></select>
-  <label>Sắp xếp</label>
-  <select id="mSortSel" onchange="applyDrawer()">
+  <div class="nav-search"><input id="searchInp" placeholder="Tìm sản phẩm..." oninput="filter()"></div>
+  <select class="sort-sel" id="sortSel" onchange="filter()">
     <option value="popular">🔥 Phổ biến</option>
     <option value="price-asc">💰 Giá tăng</option>
     <option value="price-desc">💎 Giá giảm</option>
-    <option value="rating">⭐ Đánh giá</option>
+    <option value="rating">⭐ Rating</option>
   </select>
-  <label>Tìm kiếm</label>
-  <input type="text" id="mSearchInp" placeholder="Tìm..." style="width:100%;padding:8px 10px;border:1px solid #e5e7eb;border-radius:8px;font:500 13px Inter,sans-serif" oninput="applyDrawer()">
+  <a class="zalo-btn" href="https://zalo.me" target="_blank">💬<span> Zalo</span></a>
+</nav>
+
+<!-- FILTER CHIPS -->
+<div class="filter-bar" id="filterBar">
+  <span class="filter-label">Hãng</span>
+  <span class="chip active" data-brand="" onclick="setBrand(this,'')">Tất cả</span>
+  <span class="chip" data-brand="iphone" onclick="setBrand(this,'iphone')">🍎 iPhone</span>
+  <span class="chip" data-brand="samsung" onclick="setBrand(this,'samsung')">📱 Samsung</span>
+  <span class="chip" data-brand="xiaomi" onclick="setBrand(this,'xiaomi')">🚀 Xiaomi</span>
+  <span class="chip" data-brand="oppo" onclick="setBrand(this,'oppo')">💎 OPPO</span>
+  <span class="chip" data-brand="vivo" onclick="setBrand(this,'vivo')">✨ Vivo</span>
+  <span class="chip" data-brand="realme" onclick="setBrand(this,'realme')">⚡ Realme</span>
+  <span class="chip" data-brand="oneplus" onclick="setBrand(this,'oneplus')">🔥 OnePlus</span>
+  <span class="chip" data-brand="google" onclick="setBrand(this,'google')">🎯 Pixel</span>
+  <span class="chip" data-brand="nothing" onclick="setBrand(this,'nothing')">🔘 Nothing</span>
+  <span class="chip" data-brand="sony" onclick="setBrand(this,'sony')">🎮 Sony</span>
+  <span class="chip" data-brand="huawei" onclick="setBrand(this,'huawei')">🔴 Huawei</span>
+  <span class="chip" data-brand="tecno" onclick="setBrand(this,'tecno')">🌟 Tecno</span>
+  <div class="chip-sep"></div>
+  <span class="filter-label">Loại ốp</span>
+  <span class="chip active" data-type="" onclick="setType(this,'')">Tất cả</span>
+  <span class="chip" data-type="clear" onclick="setType(this,'clear')">🫧 Trong suốt</span>
+  <span class="chip" data-type="matte" onclick="setType(this,'matte')">🖤 Nhám</span>
+  <span class="chip" data-type="silicone" onclick="setType(this,'silicone')">🫠 Silicone</span>
+  <span class="chip" data-type="leather" onclick="setType(this,'leather')">👜 Da thật</span>
+  <span class="chip" data-type="magsafe" onclick="setType(this,'magsafe')">🧲 MagSafe</span>
+  <span class="chip" data-type="armor" onclick="setType(this,'armor')">🛡️ Giáp</span>
+  <span class="chip" data-type="printed" onclick="setType(this,'printed')">🎨 In hình</span>
+  <span class="chip" data-type="carbon" onclick="setType(this,'carbon')">🏁 Carbon</span>
+  <span class="chip" data-type="wood" onclick="setType(this,'wood')">🪵 Gỗ</span>
+  <span class="chip" data-type="glitter" onclick="setType(this,'glitter')">✨ Glitter</span>
 </div>
 
 <!-- MAIN -->
 <div class="main">
-  <!-- HERO -->
   <div class="hero">
     <h1>Ốp điện thoại <em>đẳng cấp</em> cho mọi dòng máy</h1>
     <p>Trong suốt, da thật, carbon, MagSafe — tìm ốp phù hợp cho mọi hãng. Giao hàng toàn quốc.</p>
@@ -192,21 +201,18 @@ a{text-decoration:none;color:inherit}
     </div>
   </div>
 
-  <!-- PRODUCTS -->
-  <div class="sec-title"><span>🛍️</span> Sản phẩm <span id="countLabel" style="font-weight:400;font-size:13px;color:var(--txt3)"></span></div>
+  <div class="sec-title">🛍️ Sản phẩm <span id="countLabel" style="font-weight:400;font-size:12px;color:var(--txt3)"></span></div>
   <div class="pgrid" id="pgrid"></div>
   <div class="pagi" id="pagi"></div>
 
-  <!-- REVIEWS -->
-  <div class="sec-title"><span>⭐</span> Khách hàng nói gì?</div>
+  <div class="sec-title">⭐ Khách hàng nói gì?</div>
   <div class="rgrid" id="rgrid"></div>
 
-  <!-- FOOTER -->
   <div class="footer">
     <div class="f-logo">Ốp<span>Xịn</span></div>
-    <p style="margin:8px 0">Ốp điện thoại đẳng cấp cho mọi dòng máy</p>
+    <p style="margin:6px 0">Ốp điện thoại đẳng cấp cho mọi dòng máy</p>
     <a href="https://zalo.me" target="_blank" style="color:var(--pri-l)">💬 Chat Zalo đặt hàng</a>
-    <p style="margin-top:12px;font-size:11px">© 2026 Ốp Xịn</p>
+    <p style="margin-top:10px;font-size:11px">© 2026 Ốp Xịn</p>
   </div>
 </div>
 
@@ -216,33 +222,33 @@ a{text-decoration:none;color:inherit}
 </div>
 
 <script>
-const brands=[
-  {id:'iphone',name:'iPhone',icon:'🍎',models:['iPhone 15 Pro Max','iPhone 15 Pro','iPhone 15','iPhone 14 Pro Max','iPhone 14 Pro','iPhone 14','iPhone 14 Plus','iPhone 13 Pro Max','iPhone 13 Pro','iPhone 13','iPhone SE 3']},
-  {id:'samsung',name:'Samsung',icon:'📱',models:['Galaxy S24 Ultra','Galaxy S24+','Galaxy S24','Galaxy S23 Ultra','Galaxy S23','Galaxy Z Fold 5','Galaxy Z Flip 5','Galaxy A54','Galaxy A34']},
-  {id:'xiaomi',name:'Xiaomi',icon:'🚀',models:['Xiaomi 14 Ultra','Xiaomi 14','Xiaomi 13 Ultra','Redmi Note 13 Pro+','Redmi Note 13','POCO X6 Pro','POCO F6']},
-  {id:'oppo',name:'OPPO',icon:'💎',models:['Find X7 Ultra','Reno 11 Pro','Reno 11','A79 5G','A59']},
-  {id:'vivo',name:'Vivo',icon:'✨',models:['X100 Pro','X100','V30 Pro','V30','Y200','Y36']},
-  {id:'realme',name:'Realme',icon:'⚡',models:['GT5 Pro','GT Neo6','12 Pro+','12','C67','C55']},
-  {id:'oneplus',name:'OnePlus',icon:'🔥',models:['12','12R','Nord CE4','Nord 3','Open']},
-  {id:'google',name:'Google Pixel',icon:'🎯',models:['Pixel 8 Pro','Pixel 8','Pixel 8a','Pixel 7a','Pixel Fold']},
-  {id:'nothing',name:'Nothing',icon:'🔘',models:['Phone (2)','Phone (2a)','Phone (1)']},
-  {id:'sony',name:'Sony',icon:'🎮',models:['Xperia 1 VI','Xperia 5 V','Xperia 10 V']},
-  {id:'huawei',name:'Huawei',icon:'🔴',models:['Pura 70 Ultra','Pura 70 Pro','Mate 60 Pro','Nova 12','Enjoy 70']},
-  {id:'tecno',name:'Tecno',icon:'🌟',models:['Phantom V Fold 2','Phantom V Flip 2','Camon 30 Pro','Spark 20 Pro']},
+var brands=[
+  {id:'iphone',name:'iPhone',models:['iPhone 15 Pro Max','iPhone 15 Pro','iPhone 15','iPhone 14 Pro Max','iPhone 14 Pro','iPhone 14','iPhone 14 Plus','iPhone 13 Pro Max','iPhone 13 Pro','iPhone 13','iPhone SE 3']},
+  {id:'samsung',name:'Samsung',models:['Galaxy S24 Ultra','Galaxy S24+','Galaxy S24','Galaxy S23 Ultra','Galaxy S23','Galaxy Z Fold 5','Galaxy Z Flip 5','Galaxy A54','Galaxy A34']},
+  {id:'xiaomi',name:'Xiaomi',models:['Xiaomi 14 Ultra','Xiaomi 14','Xiaomi 13 Ultra','Redmi Note 13 Pro+','Redmi Note 13','POCO X6 Pro','POCO F6']},
+  {id:'oppo',name:'OPPO',models:['Find X7 Ultra','Reno 11 Pro','Reno 11','A79 5G','A59']},
+  {id:'vivo',name:'Vivo',models:['X100 Pro','X100','V30 Pro','V30','Y200','Y36']},
+  {id:'realme',name:'Realme',models:['GT5 Pro','GT Neo6','12 Pro+','12','C67','C55']},
+  {id:'oneplus',name:'OnePlus',models:['12','12R','Nord CE4','Nord 3','Open']},
+  {id:'google',name:'Google Pixel',models:['Pixel 8 Pro','Pixel 8','Pixel 8a','Pixel 7a','Pixel Fold']},
+  {id:'nothing',name:'Nothing',models:['Phone (2)','Phone (2a)','Phone (1)']},
+  {id:'sony',name:'Sony',models:['Xperia 1 VI','Xperia 5 V','Xperia 10 V']},
+  {id:'huawei',name:'Huawei',models:['Pura 70 Ultra','Pura 70 Pro','Mate 60 Pro','Nova 12','Enjoy 70']},
+  {id:'tecno',name:'Tecno',models:['Phantom V Fold 2','Phantom V Flip 2','Camon 30 Pro','Spark 20 Pro']},
 ];
-const types=[
-  {id:'clear',name:'Trong Suốt',icon:'🫧',desc:'Minh bạch, khoe lưng máy',color:'linear-gradient(135deg,#e0f7fa,#b2ebf2)'},
-  {id:'matte',name:'Nhám Cao Cấp',icon:'🖤',desc:'Sang trọng, chống vân tay',color:'linear-gradient(135deg,#37474f,#546e7a)'},
-  {id:'silicone',name:'Silicone Mềm',icon:'🫠',desc:'Nhẹ, bảo vệ tốt',color:'linear-gradient(135deg,#f8bbd0,#f48fb1)'},
-  {id:'leather',name:'Da Thật',icon:'👜',desc:'Đẳng cấp, sang trọng',color:'linear-gradient(135deg,#8d6e63,#a1887f)'},
-  {id:'magsafe',name:'MagSafe',icon:'🧲',desc:'Sạc không dây tiện lợi',color:'linear-gradient(135deg,#7c4dff,#b388ff)'},
-  {id:'armor',name:'Giáp Bảo Vệ',icon:'🛡️',desc:'Chống sốc, chống rơi',color:'linear-gradient(135deg,#ff6f00,#ffa000)'},
-  {id:'printed',name:'In Hình',icon:'🎨',desc:'Cá nhân hóa độc đáo',color:'linear-gradient(135deg,#e91e63,#f06292)'},
-  {id:'carbon',name:'Carbon Fiber',icon:'🏁',desc:'Nhẹ, cứng, thể thao',color:'linear-gradient(135deg,#263238,#455a64)'},
-  {id:'wood',name:'Gỗ Tự Nhiên',icon:'🪵',desc:'Ấm áp, mộc mạc',color:'linear-gradient(135deg,#a1887f,#bcaaa4)'},
-  {id:'glitter',name:'Glitter Kim Tuyến',icon:'✨',desc:'Lấp lánh, quyến rũ',color:'linear-gradient(135deg,#ffd54f,#ffe082)'},
+var types=[
+  {id:'clear',name:'Trong Suốt',icon:'🫧',desc:'Minh bạch, khoe lưng máy',color:'linear-gradient(135deg,#e0f7fa,#b2ebf2)',productDesc:'Ốp trong suốt cao cấp, chất liệu TPU/PC chống ố vàng. Khoe trọn vẻ đẹp thiết kế gốc của máy. Bảo vệ toàn diện mà vẫn giữ nét sang trọng.'},
+  {id:'matte',name:'Nhám Cao Cấp',icon:'🖤',desc:'Sang trọng, chống vân tay',color:'linear-gradient(135deg,#37474f,#546e7a)',productDesc:'Bề mặt nhám mịn cao cấp, không bám vân tay. Cầm nắm êm tay, chống trượt. Phủ nano siêu bền, màu không phai.'},
+  {id:'silicone',name:'Silicone Mềm',icon:'🫠',desc:'Nhẹ, bảo vệ tốt',color:'linear-gradient(135deg,#f8bbd0,#f48fb1)',productDesc:'Silicone y tế an toàn, mềm mại ôm sát. Chống sốc hiệu quả, lắp dễ dàng. Trọng lượng nhẹ, không cồng kềnh.'},
+  {id:'leather',name:'Da Thật',icon:'👜',desc:'Đẳng cấp, sang trọng',color:'linear-gradient(135deg,#8d6e63,#a1887f)',productDesc:'Da thật cao cấp, khâu thủ công tỉ mỉ. Patina đẹp theo thời gian. Lớp lót microfiber bảo vệ lưng máy. Dành cho người yêu sự sang trọng.'},
+  {id:'magsafe',name:'MagSafe',icon:'🧲',desc:'Sạc không dây tiện lợi',color:'linear-gradient(135deg,#7c4dff,#b388ff)',productDesc:'Tương thích MagSafe, nam châm dính chặt. Sạc không dây nhanh chóng. Mỏng nhẹ, thiết kế tối giản.'},
+  {id:'armor',name:'Giáp Bảo Vệ',icon:'🛡️',desc:'Chống sốc, chống rơi',color:'linear-gradient(135deg,#ff6f00,#ffa000)',productDesc:'Kiểu dáng giáp quân sự, chống rơi từ 2m. Góc bảo vệ khí nén. Vành màn hình cao 1.2mm. Dành cho người hay làm rơi máy.'},
+  {id:'printed',name:'In Hình',icon:'🎨',desc:'Cá nhân hóa độc đáo',color:'linear-gradient(135deg,#e91e63,#f06292)',productDesc:'In UV chất lượng cao, màu sắc rực rỡ. Phủ keo chống xước, chống nước. Cá nhân hóa theo yêu cầu — in ảnh, logo, họa tiết yêu thích.'},
+  {id:'carbon',name:'Carbon Fiber',icon:'🏁',desc:'Nhẹ, cứng, thể thao',color:'linear-gradient(135deg,#263238,#455a64)',productDesc:'Sợi carbon thật, siêu nhẹ siêu cứng. Kết cấu tổ ong hấp thụ lực. Phong cách thể thao, đẳng cấp F1.'},
+  {id:'wood',name:'Gỗ Tự Nhiên',icon:'🪵',desc:'Ấm áp, mộc mạc',color:'linear-gradient(135deg,#a1887f,#bcaaa4)',productDesc:'Gỗ walnut/bamboo tự nhiên, vân gỗ độc nhất. Phủ sơn chống ẩm, chống trầy. Mỗi ốp là một tác phẩm nghệ thuật.'},
+  {id:'glitter',name:'Glitter Kim Tuyến',icon:'✨',desc:'Lấp lánh, quyến rũ',color:'linear-gradient(135deg,#ffd54f,#ffe082)',productDesc:'Kim tuyến lấp lánh trong suốt, phát sáng dưới ánh đèn. Chất liệu resin cao cấp, không bong tróc. Dành cho cô nàng yêu sự nổi bật.'},
 ];
-const reviews=[
+var reviews=[
   {name:'Minh Anh',phone:'iPhone 15 Pro',type:'Nhám Cao Cấp',rating:5,text:'Ốp xịn thật! Cầm rất êm tay, không bám vân tay. Màu nhám xịn hơn ảnh.',date:'28/04/2026'},
   {name:'Hoàng Nam',phone:'Galaxy S24 Ultra',type:'Giáp Bảo Vệ',rating:5,text:'Rơi từ bàn xuống sàn mà máy không xước. Giáp thật sự!',date:'25/04/2026'},
   {name:'Thu Hà',phone:'iPhone 14',type:'In Hình',rating:4,text:'In hình rất nét, màu không phai sau 3 tháng dùng.',date:'20/04/2026'},
@@ -253,117 +259,112 @@ const reviews=[
   {name:'Quốc Bảo',phone:'Pixel 8 Pro',type:'Trong Suốt',rating:4,text:'Nhìn thấy lưng máy mà vẫn bảo vệ. Không ố vàng sau 2 tháng.',date:'08/04/2026'},
 ];
 
-// Generate products
-const products=[];
-let pid=1;
-brands.forEach(b=>b.models.forEach(m=>types.forEach(t=>{
-  const bp={leather:350000,carbon:300000,armor:250000,magsafe:280000,wood:320000,glitter:200000,printed:180000,matte:220000,silicone:120000,clear:150000}[t.id];
-  const mul=b.id==='iphone'?1.3:b.id==='samsung'?1.1:b.id==='google'?1.15:b.id==='oneplus'?1.05:1;
-  products.push({id:pid++,brand:b.id,brandName:b.name,model:m,typeId:t.id,typeName:t.name,typeIcon:t.icon,price:Math.round(bp*mul/1000)*1000,rating:+(4+Math.random()).toFixed(1),sold:Math.floor(Math.random()*500)+10,image:t.color});
-})));
+// Generate products with descriptions
+var products=[];
+var pid=1;
+brands.forEach(function(b){b.models.forEach(function(m){types.forEach(function(t){
+  var bp={leather:350000,carbon:300000,armor:250000,magsafe:280000,wood:320000,glitter:200000,printed:180000,matte:220000,silicone:120000,clear:150000}[t.id];
+  var mul=b.id==='iphone'?1.3:b.id==='samsung'?1.1:b.id==='google'?1.15:b.id==='oneplus'?1.05:1;
+  var price=Math.round(bp*mul/1000)*1000;
+  var shortDesc=t.productDesc.split('.')[0]+'.';
+  products.push({id:pid++,brand:b.id,brandName:b.name,model:m,typeId:t.id,typeName:t.name,typeIcon:t.icon,price:price,rating:+(4+Math.random()).toFixed(1),sold:Math.floor(Math.random()*500)+10,image:t.color,desc:t.productDesc,shortDesc:shortDesc});
+})})});
 
-// Populate selects
-function populateSelects(){
-  const bs=document.getElementById('brandSel'),mb=document.getElementById('mBrandSel');
-  brands.forEach(b=>{bs.innerHTML+=`<option value="${b.id}">${b.icon} ${b.name}</option>`;mb.innerHTML+=`<option value="${b.id}">${b.icon} ${b.name}</option>`});
-  const ts=document.getElementById('typeSel'),mt=document.getElementById('mTypeSel');
-  types.forEach(t=>{ts.innerHTML+=`<option value="${t.id}">${t.icon} ${t.name}</option>`;mt.innerHTML+=`<option value="${t.id}">${t.icon} ${t.name}</option>`});
+var curBrand='',curType='',curSort='popular',curSearch='',curPage=1;
+
+function setBrand(el,val){
+  curBrand=val;curPage=1;
+  document.querySelectorAll('[data-brand]').forEach(function(c){c.classList.toggle('active',c.dataset.brand===val)});
+  loadProducts();
 }
-
-let curBrand=null,curType=null,curSort='popular',curSearch='',curPage=1;
-
-async function filter(){
-  curBrand=document.getElementById('brandSel').value;
-  curType=document.getElementById('typeSel').value;
-  curSort=document.getElementById('sortSel').value;
+function setType(el,val){
+  curType=val;curPage=1;
+  document.querySelectorAll('[data-type]').forEach(function(c){c.classList.toggle('active',c.dataset.type===val)});
+  loadProducts();
+}
+function filter(){
   curSearch=document.getElementById('searchInp').value;
+  curSort=document.getElementById('sortSel').value;
   curPage=1;
   loadProducts();
-}
-
-function applyDrawer(){
-  curBrand=document.getElementById('mBrandSel').value;
-  curType=document.getElementById('mTypeSel').value;
-  curSort=document.getElementById('mSortSel').value;
-  curSearch=document.getElementById('mSearchInp').value;
-  // Sync desktop selects
-  document.getElementById('brandSel').value=curBrand;
-  document.getElementById('typeSel').value=curType;
-  document.getElementById('sortSel').value=curSort;
-  document.getElementById('searchInp').value=curSearch;
-  curPage=1;
-  loadProducts();
-  toggleDrawer();
 }
 
 function loadProducts(){
-  let r=[...products];
-  if(curBrand)r=r.filter(p=>p.brand===curBrand);
-  if(curType)r=r.filter(p=>p.typeId===curType);
-  if(curSearch){const s=curSearch.toLowerCase();r=r.filter(p=>p.model.toLowerCase().includes(s)||p.brandName.toLowerCase().includes(s)||p.typeName.toLowerCase().includes(s))}
-  if(curSort==='price-asc')r.sort((a,b)=>a.price-b.price);
-  else if(curSort==='price-desc')r.sort((a,b)=>b.price-a.price);
-  else if(curSort==='rating')r.sort((a,b)=>b.rating-a.rating);
-  else r.sort((a,b)=>b.sold-a.sold);
-  const total=r.length,per=20,pages=Math.ceil(total/per),page=Math.min(curPage,pages||1);
+  var r=products.slice();
+  if(curBrand)r=r.filter(function(p){return p.brand===curBrand});
+  if(curType)r=r.filter(function(p){return p.typeId===curType});
+  if(curSearch){var s=curSearch.toLowerCase();r=r.filter(function(p){return p.model.toLowerCase().indexOf(s)>-1||p.brandName.toLowerCase().indexOf(s)>-1||p.typeName.toLowerCase().indexOf(s)>-1})}
+  if(curSort==='price-asc')r.sort(function(a,b){return a.price-b.price});
+  else if(curSort==='price-desc')r.sort(function(a,b){return b.price-a.price});
+  else if(curSort==='rating')r.sort(function(a,b){return b.rating-a.rating});
+  else r.sort(function(a,b){return b.sold-a.sold});
+  var total=r.length,per=20,pages=Math.ceil(total/per),page=Math.min(curPage,pages||1);
   r=r.slice((page-1)*per,page*per);
-  document.getElementById('countLabel').textContent=`(${total})`;
+  document.getElementById('countLabel').textContent='('+total+')';
   document.getElementById('statNum').textContent=products.length+'+';
-  document.getElementById('pgrid').innerHTML=r.map(p=>`
-    <div class="pcard" onclick="openP(${p.id})">
-      <div class="pcard-img" style="background:${p.image}">${p.typeIcon}${p.sold>300?'<div class="pcard-badge">Hot</div>':''}</div>
-      <div class="pcard-body">
-        <div class="pcard-brand">${p.brandName}</div>
-        <div class="pcard-model">${p.model}</div>
-        <div class="pcard-type">${p.typeIcon} ${p.typeName}</div>
-        <div class="pcard-foot">
-          <div class="pcard-price">${(p.price/1000).toFixed(0)}K</div>
-          <div class="pcard-meta">★${p.rating} · ${p.sold} bán</div>
-        </div>
-      </div>
-    </div>`).join('');
-  const pagi=document.getElementById('pagi');
+  var html='';
+  r.forEach(function(p){
+    html+='<div class="pcard" onclick="openP('+p.id+')">';
+    html+='<div class="pcard-img" style="background:'+p.image+'">'+p.typeIcon+(p.sold>300?'<div class="pcard-badge">Hot</div>':'')+'</div>';
+    html+='<div class="pcard-body">';
+    html+='<div class="pcard-brand">'+p.brandName+'</div>';
+    html+='<div class="pcard-model">'+p.model+'</div>';
+    html+='<div class="pcard-type">'+p.typeIcon+' '+p.typeName+'</div>';
+    html+='<div class="pcard-desc">'+p.shortDesc+'</div>';
+    html+='<div class="pcard-foot"><div class="pcard-price">'+(p.price/1000).toFixed(0)+'K</div><div class="pcard-meta">★'+p.rating+' · '+p.sold+' bán</div></div>';
+    html+='</div></div>';
+  });
+  document.getElementById('pgrid').innerHTML=html;
+  var pagi=document.getElementById('pagi');
   if(pages<=1){pagi.innerHTML='';return}
-  pagi.innerHTML=Array.from({length:pages},(_,i)=>`<button class="${i+1===page?'active':''}" onclick="goPage(${i+1})">${i+1}</button>`).join('');
+  var ph='';
+  for(var i=1;i<=pages;i++)ph+='<button class="'+(i===page?'active':'')+'" onclick="goPage('+i+')">'+i+'</button>';
+  pagi.innerHTML=ph;
 }
 
 function goPage(p){curPage=p;loadProducts();window.scrollTo({top:300,behavior:'smooth'})}
 
 function openP(id){
-  const p=products.find(x=>x.id===id);if(!p)return;
-  const rel=products.filter(x=>x.brand===p.brand&&x.typeId===p.typeId&&x.id!==p.id).slice(0,4);
-  const prev=reviews.filter(r=>r.type===p.typeName);
-  document.getElementById('modalC').innerHTML=`
-    <div class="modal-img" style="background:${p.image}">${p.typeIcon}</div>
-    <div class="modal-body">
-      <div class="modal-brand">${p.brandName}</div>
-      <div class="modal-model">${p.model}</div>
-      <div class="modal-type">${p.typeIcon} ${p.typeName}</div>
-      <div class="modal-price">${p.price.toLocaleString('vi-VN')}₫</div>
-      <div class="modal-grid">
-        <div class="modal-cell"><div class="lbl">Đánh giá</div><div class="val">★ ${p.rating}</div></div>
-        <div class="modal-cell"><div class="lbl">Đã bán</div><div class="val">${p.sold}</div></div>
-        <div class="modal-cell"><div class="lbl">Hãng</div><div class="val">${p.brandName}</div></div>
-        <div class="modal-cell"><div class="lbl">Loại ốp</div><div class="val">${p.typeName}</div></div>
-      </div>
-      <a class="modal-zalo" href="https://zalo.me" target="_blank">💬 Chat Zalo đặt ốp này</a>
-      ${prev.length?('<div style="font-weight:700;font-size:14px;margin-bottom:8px">Đánh giá</div>'+prev.map(function(r){return '<div style="background:var(--bg);padding:10px;border-radius:8px;margin-bottom:6px"><strong>'+r.name+'</strong> <span style="color:#f59e0b">'+'★'.repeat(r.rating)+'</span><br><span style="font-size:12px;color:var(--txt2)">'+r.text+'</span></div>'}).join('')):''}
-    </div>`;
+  var p=products.find(function(x){return x.id===id});if(!p)return;
+  var prev=reviews.filter(function(r){return r.type===p.typeName});
+  var h='<div class="modal-img" style="background:'+p.image+'">'+p.typeIcon+'</div>';
+  h+='<div class="modal-body">';
+  h+='<div class="modal-brand">'+p.brandName+'</div>';
+  h+='<div class="modal-model">'+p.model+'</div>';
+  h+='<div class="modal-type">'+p.typeIcon+' '+p.typeName+'</div>';
+  h+='<div class="modal-desc">'+p.desc+'</div>';
+  h+='<div class="modal-price">'+p.price.toLocaleString('vi-VN')+'₫</div>';
+  h+='<div class="modal-grid">';
+  h+='<div class="modal-cell"><div class="lbl">Đánh giá</div><div class="val">★ '+p.rating+'</div></div>';
+  h+='<div class="modal-cell"><div class="lbl">Đã bán</div><div class="val">'+p.sold+'</div></div>';
+  h+='<div class="modal-cell"><div class="lbl">Hãng</div><div class="val">'+p.brandName+'</div></div>';
+  h+='<div class="modal-cell"><div class="lbl">Loại ốp</div><div class="val">'+p.typeName+'</div></div>';
+  h+='</div>';
+  h+='<a class="modal-zalo" href="https://zalo.me" target="_blank">💬 Chat Zalo đặt ốp này</a>';
+  if(prev.length){
+    h+='<div style="font-weight:700;font-size:13px;margin-bottom:8px">Đánh giá từ khách</div>';
+    prev.forEach(function(r){
+      h+='<div style="background:var(--bg);padding:8px 10px;border-radius:8px;margin-bottom:6px">';
+      h+='<strong>'+r.name+'</strong> <span style="color:#f59e0b">'+('★'.repeat(r.rating))+'</span><br>';
+      h+='<span style="font-size:11px;color:var(--txt2)">'+r.text+'</span></div>';
+    });
+  }
+  h+='</div>';
+  document.getElementById('modalC').innerHTML=h;
   document.getElementById('modal').classList.add('show');
 }
 function closeModal(){document.getElementById('modal').classList.remove('show')}
 
-function toggleDrawer(){document.getElementById('drawer').classList.toggle('open');document.getElementById('drawerBg').classList.toggle('show')}
-
 // Reviews
-document.getElementById('rgrid').innerHTML=reviews.map(r=>`
-  <div class="rcard">
-    <div class="rcard-top"><div class="rcard-av">${r.name[0]}</div><div><div class="rcard-name">${r.name}</div><div class="rcard-info">${r.phone} · ${r.type}</div></div></div>
-    <div class="rcard-stars">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</div>
-    <div class="rcard-text">${r.text}</div>
-  </div>`).join('');
+(function(){
+  var h='';
+  reviews.forEach(function(r){
+    h+='<div class="rcard"><div class="rcard-top"><div class="rcard-av">'+r.name[0]+'</div><div><div class="rcard-name">'+r.name+'</div><div class="rcard-info">'+r.phone+' · '+r.type+'</div></div></div><div class="rcard-stars">'+('★'.repeat(r.rating))+('☆'.repeat(5-r.rating))+'</div><div class="rcard-text">'+r.text+'</div></div>';
+  });
+  document.getElementById('rgrid').innerHTML=h;
+})();
 
-populateSelects();loadProducts();
+loadProducts();
 </script>
 </body>
 </html>
