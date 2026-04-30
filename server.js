@@ -115,4 +115,4 @@ app.get('/api/products/:id', (req, res) => {
 // SPA fallback
 app.get('*', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
 
-app.listen(PORT, () => console.log(`🛡️ Ốp Xịn | http://localhost:${PORT}`));
+app.listen(PORT, '0.0.0.0', () => console.log(`🛡️ Ốp Xịn | http://0.0.0.0:${PORT}`));
