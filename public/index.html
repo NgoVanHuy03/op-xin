@@ -61,10 +61,10 @@ body{min-height:100%}
 }
 </style>
 </head>
-<body class="bg-gray-50 text-gray-900 font-sans overflow-x-hidden">
+<body class="bg-gray-50 text-gray-900 font-sans overflow-x-hidden m-0 p-0" style="margin:0;padding:0">
 
-<!-- ===== FIXED HEADER CONTAINER (no background gaps) ===== -->
-<div class="fixed top-0 inset-x-0 z-50">
+<!-- ===== FIXED HEADER CONTAINER ===== -->
+<div class="fixed z-50" style="top:0;left:0;right:0" id="headerWrap">
 
   <!-- NAVBAR -->
   <nav class="bg-white/95 backdrop-blur border-b border-gray-100 h-14 flex items-center px-3 sm:px-4 gap-2 sm:gap-3">
@@ -307,10 +307,9 @@ brands.forEach(function(b){b.models.forEach(function(m){types.forEach(function(t
 var curBrand='',curType='',curSort='popular',curSearch='',curPage=1;
 var curSlide=0,totalSlides=3,slideTimer;
 
-// Update header spacer height dynamically
 function updateSpacer(){
-  var header=document.querySelector('.fixed.top-0');
-  if(header)document.getElementById('headerSpacer').style.height=header.offsetHeight+'px';
+  var hdr=document.getElementById('headerWrap');
+  if(hdr)document.getElementById('headerSpacer').style.height=hdr.offsetHeight+'px';
 }
 
 // ===== SLIDER =====
@@ -321,7 +320,7 @@ function goSlide(n){
   resetSlideTimer();
 }
 function nextSlide(){goSlide((curSlide+1)%totalSlides)}
-function resetSlideTimer(){clearTimeout(slideTimer);slideTimer=setTimeout(function(){nextSlide()},1000)}
+function resetSlideTimer(){clearTimeout(slideTimer);slideTimer=setTimeout(function(){},1000)}
 resetSlideTimer();
 var slideInterval=setInterval(function(){goSlide((curSlide+1)%totalSlides)},5000);
 
@@ -409,9 +408,36 @@ function loadProducts(){
   var pagi=document.getElementById('pagi');
   if(pages<=1){pagi.innerHTML='';return}
   var ph='';
-  for(var i=1;i<=pages;i++){
+
+  // Window: show ~5 page numbers
+  var win=5;
+  var start=Math.max(1,page-Math.floor(win/2));
+  var end=Math.min(pages,start+win-1);
+  if(end-start<win-1)start=Math.max(1,end-win+1);
+
+  // Left arrow
+  if(page>1){
+    ph+='<button class="px-2 sm:px-2.5 py-1 sm:py-1.5 text-[11px] sm:text-xs font-semibold rounded-lg border cursor-pointer transition-all duration-150 bg-white border-gray-200 hover:border-pri text-pri" onclick="goPage('+(page-1)+')" title="Trang trước">«</button>';
+    // Show "1 ..." if start > 1
+    if(start>1){
+      ph+='<button class="px-2.5 sm:px-3 py-1 sm:py-1.5 text-[11px] sm:text-xs font-semibold rounded-lg border cursor-pointer transition-all duration-150 bg-white border-gray-200 hover:border-pri" onclick="goPage(1)">1</button>';
+      if(start>2)ph+='<span class="px-1 text-gray-400 self-center">…</span>';
+    }
+  }
+
+  for(var i=start;i<=end;i++){
     ph+='<button class="px-2.5 sm:px-3 py-1 sm:py-1.5 text-[11px] sm:text-xs font-semibold rounded-lg border cursor-pointer transition-all duration-150 '+(i===page?'bg-pri text-white border-pri':'bg-white border-gray-200 hover:border-pri')+'" onclick="goPage('+i+')">'+i+'</button>';
   }
+
+  // Right arrow
+  if(page<pages){
+    if(end<pages-1)ph+='<span class="px-1 text-gray-400 self-center">…</span>';
+    if(end<pages){
+      ph+='<button class="px-2.5 sm:px-3 py-1 sm:py-1.5 text-[11px] sm:text-xs font-semibold rounded-lg border cursor-pointer transition-all duration-150 bg-white border-gray-200 hover:border-pri" onclick="goPage('+pages+')">'+pages+'</button>';
+    }
+    ph+='<button class="px-2 sm:px-2.5 py-1 sm:py-1.5 text-[11px] sm:text-xs font-semibold rounded-lg border cursor-pointer transition-all duration-150 bg-white border-gray-200 hover:border-pri text-pri" onclick="goPage('+(page+1)+')" title="Trang sau">»</button>';
+  }
+
   pagi.innerHTML=ph;
 }
 function goPage(p){curPage=p;loadProducts();window.scrollTo({top:300,behavior:'smooth'})}
