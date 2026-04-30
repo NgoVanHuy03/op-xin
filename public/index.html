@@ -24,10 +24,7 @@ tailwind.config = {
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 html{scroll-behavior:smooth;-webkit-tap-highlight-color:transparent;height:100%}
-body{min-height:100%}
-
-.filter-scroll::-webkit-scrollbar{display:none}
-.filter-scroll{-ms-overflow-style:none;scrollbar-width:none}
+body{min-height:100%;margin:0;padding:0}
 
 /* Active chip */
 .chip.active{background:#6c5ce7!important;color:#fff!important;border-color:#6c5ce7!important}
@@ -36,7 +33,7 @@ body{min-height:100%}
 .pcard:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(108,92,231,.15)}
 
 /* Slider */
-.slider-track{display:flex;transition:transform .5s ease}
+.slider-track{display:flex;transition:transform .4s ease}
 .slider-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.4);cursor:pointer;transition:all .3s}
 .slider-dot.active{background:#fff;width:24px;border-radius:4px}
 
@@ -59,75 +56,34 @@ body{min-height:100%}
   .modal-wrap{align-items:flex-end!important;padding:0!important}
   .modal-box{border-radius:14px 14px 0 0!important;margin-top:auto;max-height:85vh;width:100%;max-width:100%}
 }
+
+/* Filter list wrap */
+.filter-list-wrap{max-height:0;overflow:hidden;transition:max-height .35s ease}
+.filter-list-wrap.open{max-height:600px}
 </style>
 </head>
-<body class="bg-gray-50 text-gray-900 font-sans overflow-x-hidden m-0 p-0" style="margin:0;padding:0">
+<body class="bg-gray-50 text-gray-900 font-sans overflow-x-hidden">
 
-<!-- ===== FIXED HEADER CONTAINER ===== -->
+<!-- ===== SIMPLE FIXED HEADER ===== -->
 <div class="fixed z-50" style="top:0;left:0;right:0" id="headerWrap">
-
-  <!-- NAVBAR -->
   <nav class="bg-white/95 backdrop-blur border-b border-gray-100 h-14 flex items-center px-3 sm:px-4 gap-2 sm:gap-3">
     <a href="#" class="text-lg sm:text-xl font-extrabold text-pri whitespace-nowrap flex-shrink-0">Ốp<span class="text-acc">Xịn</span></a>
     <div class="flex-1 min-w-0 relative">
       <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs sm:text-sm pointer-events-none">🔍</span>
       <input id="searchInp" type="text" placeholder="Tìm ốp cho máy bạn..." class="w-full pl-8 pr-2.5 py-2 text-xs sm:text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-pri transition" oninput="filter()">
     </div>
-    <select id="sortSel" class="hidden xs:block py-2 pl-2.5 pr-6 text-xs sm:text-sm font-medium border border-gray-200 rounded-lg bg-white appearance-none cursor-pointer focus:outline-none focus:border-pri flex-shrink-0" style="background-image:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%236b7280'/%3E%3C/svg%3E&quot;);background-repeat:no-repeat;background-position:right 6px center" onchange="filter()">
-      <option value="popular">🔥 Bán chạy</option>
-      <option value="newest">🆕 Mới</option>
-      <option value="price-asc">💰 Giá ↑</option>
-      <option value="price-desc">💎 Giá ↓</option>
-      <option value="rating">⭐ Rating</option>
-    </select>
     <a href="https://zalo.me" target="_blank" class="bg-gradient-to-br from-pri to-acc text-white text-[11px] sm:text-xs font-bold py-2 px-2.5 sm:px-3 rounded-lg hover:opacity-90 transition whitespace-nowrap flex items-center gap-1 shadow-lg shadow-pri/20 flex-shrink-0">💬<span class="hidden sm:inline"> Zalo</span></a>
   </nav>
-
-  <!-- URGENCY STRIP -->
-  <div class="bg-hot text-white text-[10px] sm:text-xs font-semibold py-1 text-center overflow-hidden" id="urgencyStrip">
-    🔥 SALE cuối tuần — Giảm đến <strong class="text-yellow-200">30%</strong> <span class="hidden xs:inline">· ⏱️ Kết thúc sau: <span id="countdown1" class="cd-box">02:14:35</span></span>
-  </div>
-
-  <!-- FILTER CHIPS -->
-  <div class="bg-white border-b border-gray-100 py-1.5 px-3 sm:px-4 flex items-center gap-1.5 sm:gap-2 filter-scroll overflow-x-auto">
-    <span class="text-[9px] sm:text-[10px] font-bold text-gray-400 uppercase tracking-wider whitespace-nowrap flex-shrink-0">Hãng</span>
-    <span class="chip active shrink-0 px-2.5 py-1 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-brand="" onclick="setBrand(this,'')">Tất cả</span>
-    <span class="chip shrink-0 px-2.5 py-1 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-brand="iphone" onclick="setBrand(this,'iphone')">🍎 iPhone</span>
-    <span class="chip shrink-0 px-2.5 py-1 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-brand="samsung" onclick="setBrand(this,'samsung')">📱 Samsung</span>
-    <span class="chip shrink-0 px-2.5 py-1 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-brand="xiaomi" onclick="setBrand(this,'xiaomi')">🚀 Xiaomi</span>
-    <span class="chip shrink-0 px-2.5 py-1 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-brand="oppo" onclick="setBrand(this,'oppo')">💎 OPPO</span>
-    <span class="chip shrink-0 px-2.5 py-1 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-brand="vivo" onclick="setBrand(this,'vivo')">✨ Vivo</span>
-    <span class="chip shrink-0 px-2.5 py-1 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-brand="realme" onclick="setBrand(this,'realme')">⚡ Realme</span>
-    <span class="chip shrink-0 px-2.5 py-1 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-brand="oneplus" onclick="setBrand(this,'oneplus')">🔥 OnePlus</span>
-    <span class="chip shrink-0 px-2.5 py-1 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-brand="google" onclick="setBrand(this,'google')">🎯 Pixel</span>
-    <span class="chip shrink-0 px-2.5 py-1 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-brand="nothing" onclick="setBrand(this,'nothing')">🔘 Nothing</span>
-    <span class="chip shrink-0 px-2.5 py-1 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-brand="sony" onclick="setBrand(this,'sony')">🎮 Sony</span>
-    <span class="chip shrink-0 px-2.5 py-1 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-brand="huawei" onclick="setBrand(this,'huawei')">🔴 Huawei</span>
-    <span class="chip shrink-0 px-2.5 py-1 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-brand="tecno" onclick="setBrand(this,'tecno')">🌟 Tecno</span>
-    <div class="w-px h-5 bg-gray-200 shrink-0 mx-0.5 sm:mx-1"></div>
-    <span class="text-[9px] sm:text-[10px] font-bold text-gray-400 uppercase tracking-wider whitespace-nowrap flex-shrink-0">Loại</span>
-    <span class="chip active shrink-0 px-2.5 py-1 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-type="" onclick="setType(this,'')">Tất cả</span>
-    <span class="chip shrink-0 px-2.5 py-1 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-type="clear" onclick="setType(this,'clear')">🫧 Trong</span>
-    <span class="chip shrink-0 px-2.5 py-1 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-type="matte" onclick="setType(this,'matte')">🖤 Nhám</span>
-    <span class="chip shrink-0 px-2.5 py-1 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-type="silicone" onclick="setType(this,'silicone')">🫠 Silicone</span>
-    <span class="chip shrink-0 px-2.5 py-1 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-type="leather" onclick="setType(this,'leather')">👜 Da</span>
-    <span class="chip shrink-0 px-2.5 py-1 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-type="magsafe" onclick="setType(this,'magsafe')">🧲 MagSafe</span>
-    <span class="chip shrink-0 px-2.5 py-1 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-type="armor" onclick="setType(this,'armor')">🛡️ Giáp</span>
-    <span class="chip shrink-0 px-2.5 py-1 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-type="printed" onclick="setType(this,'printed')">🎨 In hình</span>
-    <span class="chip shrink-0 px-2.5 py-1 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-type="carbon" onclick="setType(this,'carbon')">🏁 Carbon</span>
-    <span class="chip shrink-0 px-2.5 py-1 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-type="wood" onclick="setType(this,'wood')">🪵 Gỗ</span>
-    <span class="chip shrink-0 px-2.5 py-1 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none" data-type="glitter" onclick="setType(this,'glitter')">✨ Glitter</span>
-  </div>
 </div>
 
-<!-- ===== HEADER SPACER (pushes content below fixed header) ===== -->
-<div id="headerSpacer" class="w-full" style="height:116px"></div>
+<!-- ===== HEADER SPACER ===== -->
+<div id="headerSpacer" class="w-full" style="height:56px"></div>
 
 <!-- ===== MAIN ===== -->
 <main class="pb-10 px-3 sm:px-4 max-w-6xl mx-auto">
 
-  <!-- ★ HERO SLIDER ★ -->
-  <div class="relative rounded-2xl overflow-hidden mb-4 sm:mb-5 shadow-xl" id="heroSlider">
+  <!-- ★ HERO SLIDER (with touch swipe) ★ -->
+  <div class="relative rounded-2xl overflow-hidden mb-4 sm:mb-5 shadow-xl select-none" id="heroSlider">
     <div class="slider-track" id="sliderTrack">
       <!-- Slide 1 -->
       <div class="shrink-0 w-full bg-gradient-to-br from-pri-dark via-pri to-acc p-5 sm:p-8 text-white">
@@ -192,17 +148,51 @@ body{min-height:100%}
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3" id="flashProducts"></div>
   </div>
 
-  <!-- ★ ALL PRODUCTS ★ -->
-  <div class="flex items-center gap-2 mb-2.5 sm:mb-3" id="products">
-    <h2 class="text-sm sm:text-lg font-bold">🛍️ Tất cả sản phẩm</h2>
-    <span id="countLabel" class="text-[11px] sm:text-xs text-gray-400 font-normal"></span>
+  <!-- ★ URGENCY STRIP (moved here) ★ -->
+  <div class="bg-hot text-white text-xs sm:text-sm font-semibold py-2 px-4 rounded-xl mb-4 sm:mb-5 text-center shadow-md">
+    🔥 SALE cuối tuần — Giảm đến <strong class="text-yellow-200">30%</strong> · ⏱️ Kết thúc sau: <span id="countdown1" class="cd-box">02:14:35</span>
   </div>
-  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2.5 sm:gap-4 mb-5 sm:mb-6" id="pgrid"></div>
-  <div class="flex justify-center gap-1.5 mb-6 sm:mb-8 flex-wrap" id="pagi"></div>
+
+  <!-- ===== PRODUCTS SECTION ===== -->
+  <div id="products">
+
+    <!-- ★ FILTERS + SORT ★ -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-3.5 sm:p-4 mb-3 sm:mb-4">
+      <!-- Filter toggle bar -->
+      <div class="flex items-center justify-between mb-2">
+        <div class="flex items-center gap-2">
+          <h2 class="text-sm sm:text-lg font-bold">🛍️ Tất cả sản phẩm</h2>
+          <span id="countLabel" class="text-[11px] sm:text-xs text-gray-400 font-normal"></span>
+        </div>
+        <div class="flex items-center gap-2 sm:gap-3">
+          <select id="sortSel" class="py-1.5 pl-2 pr-6 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-lg bg-white appearance-none cursor-pointer focus:outline-none focus:border-pri" style="background-image:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%236b7280'/%3E%3C/svg%3E&quot;);background-repeat:no-repeat;background-position:right 6px center" onchange="filter()">
+            <option value="popular">🔥 Bán chạy</option>
+            <option value="newest">🆕 Mới nhất</option>
+            <option value="price-asc">💰 Giá ↑</option>
+            <option value="price-desc">💎 Giá ↓</option>
+            <option value="rating">⭐ Rating</option>
+          </select>
+          <button class="flex items-center gap-1 text-[11px] sm:text-xs font-medium text-pri cursor-pointer border border-pri/30 rounded-lg px-2.5 py-1.5 hover:bg-pri/5 transition select-none" onclick="toggleFilters()">
+            <span id="filterArrow">▼</span> Bộ lọc <span id="activeCount"></span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Collapsible filter list -->
+      <div class="filter-list-wrap" id="filterListWrap">
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-y-3 gap-x-3 sm:gap-x-4" id="filterList"></div>
+      </div>
+    </div>
+
+    <!-- ★ PRODUCT GRID ★ -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2.5 sm:gap-4 mb-5 sm:mb-6" id="pgrid"></div>
+    <div class="flex justify-center gap-1.5 mb-6 sm:mb-8 flex-wrap" id="pagi"></div>
+  </div>
 
   <!-- ★ REVIEWS ★ -->
   <h2 class="text-sm sm:text-lg font-bold mb-2.5 sm:mb-3">⭐ Khách hàng nói gì?</h2>
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3 mb-6 sm:mb-8" id="rgrid"></div>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3 mb-3" id="rgrid"></div>
+  <div class="text-center mb-6 sm:mb-8" id="reviewMore"></div>
 
   <!-- ★ ABOUT ★ -->
   <h2 class="text-sm sm:text-lg font-bold mb-2.5 sm:mb-3">🏪 Về Ốp Xịn</h2>
@@ -260,27 +250,27 @@ var brands=[
   {id:'tecno',name:'Tecno',models:['Phantom V Fold 2','Phantom V Flip 2','Camon 30 Pro','Spark 20 Pro']},
 ];
 var types=[
-  {id:'clear',name:'Trong Suốt',icon:'🫧',color:'from-cyan-100 to-cyan-200',desc:'Ốp trong suốt cao cấp, chất liệu TPU/PC chống ố vàng. Khoe trọn vẻ đẹp thiết kế gốc của máy. Bảo vệ toàn diện mà vẫn giữ nét sang trọng.'},
-  {id:'matte',name:'Nhám Cao Cấp',icon:'🖤',color:'from-gray-600 to-gray-500',desc:'Bề mặt nhám mịn cao cấp, không bám vân tay. Cầm nắm êm, chống trượt. Phủ nano siêu bền.'},
-  {id:'silicone',name:'Silicone Mềm',icon:'🫠',color:'from-pink-200 to-pink-300',desc:'Silicone y tế an toàn, mềm mại ôm sát. Chống sốc hiệu quả. Trọng lượng nhẹ, không cồng kềnh.'},
-  {id:'leather',name:'Da Thật',icon:'👜',color:'from-amber-700 to-amber-600',desc:'Da thật cao cấp, khâu thủ công. Patina đẹp theo thời gian. Lớp lót microfiber bảo vệ lưng máy.'},
-  {id:'magsafe',name:'MagSafe',icon:'🧲',color:'from-violet-600 to-violet-400',desc:'Tương thích MagSafe, nam châm dính chặt. Sạc không dây nhanh. Mỏng nhẹ, thiết kế tối giản.'},
-  {id:'armor',name:'Giáp Bảo Vệ',icon:'🛡️',color:'from-orange-500 to-amber-400',desc:'Kiểu giáp quân sự, chống rơi từ 2m. Góc bảo vệ khí nén. Vành màn hình cao 1.2mm.'},
-  {id:'printed',name:'In Hình',icon:'🎨',color:'from-pink-500 to-pink-400',desc:'In UV chất lượng cao, màu rực rỡ. Phủ keo chống xước. Cá nhân hóa theo yêu cầu.'},
-  {id:'carbon',name:'Carbon Fiber',icon:'🏁',color:'from-gray-700 to-gray-600',desc:'Sợi carbon thật, siêu nhẹ siêu cứng. Kết cấu tổ ong hấp thụ lực. Phong cách thể thao.'},
-  {id:'wood',name:'Gỗ Tự Nhiên',icon:'🪵',color:'from-amber-600 to-amber-500',desc:'Gỗ walnut/bamboo tự nhiên, vân gỗ độc nhất. Phủ sơn chống ẩm. Mỗi ốp là một tác phẩm.'},
-  {id:'glitter',name:'Glitter Kim Tuyến',icon:'✨',color:'from-yellow-300 to-yellow-200',desc:'Kim tuyến lấp lánh trong suốt. Chất liệu resin cao cấp, không bong tróc.'},
+  {id:'clear',name:'Trong Suốt',icon:'🫧',color:'from-cyan-100 to-cyan-200',desc:'Ốp trong suốt cao cấp, chất liệu TPU/PC chống ố vàng. Khoe trọn vẻ đẹp thiết kế gốc.'},
+  {id:'matte',name:'Nhám Cao Cấp',icon:'🖤',color:'from-gray-600 to-gray-500',desc:'Bề mặt nhám mịn, không bám vân tay. Phủ nano siêu bền.'},
+  {id:'silicone',name:'Silicone Mềm',icon:'🫠',color:'from-pink-200 to-pink-300',desc:'Silicone y tế an toàn, mềm mại ôm sát. Chống sốc hiệu quả.'},
+  {id:'leather',name:'Da Thật',icon:'👜',color:'from-amber-700 to-amber-600',desc:'Da thật cao cấp, khâu thủ công. Patina đẹp theo thời gian.'},
+  {id:'magsafe',name:'MagSafe',icon:'🧲',color:'from-violet-600 to-violet-400',desc:'Tương thích MagSafe, dính chặt. Sạc không dây nhanh.'},
+  {id:'armor',name:'Giáp Bảo Vệ',icon:'🛡️',color:'from-orange-500 to-amber-400',desc:'Kiểu giáp quân sự, chống rơi từ 2m. Góc bảo vệ khí nén.'},
+  {id:'printed',name:'In Hình',icon:'🎨',color:'from-pink-500 to-pink-400',desc:'In UV chất lượng cao, màu rực rỡ. Phủ keo chống xước.'},
+  {id:'carbon',name:'Carbon Fiber',icon:'🏁',color:'from-gray-700 to-gray-600',desc:'Sợi carbon thật, siêu nhẹ siêu cứng. Phong cách thể thao.'},
+  {id:'wood',name:'Gỗ Tự Nhiên',icon:'🪵',color:'from-amber-600 to-amber-500',desc:'Gỗ tự nhiên, vân gỗ độc nhất. Phủ sơn chống ẩm.'},
+  {id:'glitter',name:'Glitter Kim Tuyến',icon:'✨',color:'from-yellow-300 to-yellow-200',desc:'Kim tuyến lấp lánh, resin cao cấp không bong tróc.'},
 ];
 var reviews=[
-  {name:'Minh Anh',phone:'iPhone 15 Pro',type:'Nhám Cao Cấp',rating:5,text:'Ốp xịn thật! Cầm rất êm, không bám vân tay. Đóng gói đẹp, giao nhanh hơn dự kiến. Sẽ mua thêm cho máy phụ.'},
-  {name:'Hoàng Nam',phone:'Galaxy S24 Ultra',type:'Giáp Bảo Vệ',rating:5,text:'Rơi từ bàn xuống sàn 2 lần mà máy không xước! Giáp thật, không phải quảng cáo. 10 điểm!'},
+  {name:'Minh Anh',phone:'iPhone 15 Pro',type:'Nhám Cao Cấp',rating:5,text:'Ốp xịn thật! Cầm rất êm, không bám vân tay. Đóng gói đẹp, giao nhanh hơn dự kiến.'},
+  {name:'Hoàng Nam',phone:'Galaxy S24 Ultra',type:'Giáp Bảo Vệ',rating:5,text:'Rơi từ bàn xuống sàn 2 lần mà máy không xước! 10 điểm!'},
   {name:'Thu Hà',phone:'iPhone 14',type:'In Hình',rating:4,text:'In hình rất nét, màu không phai sau 3 tháng. Chờ giao hơi lâu nhưng đáng tiền.'},
-  {name:'Đức Anh',phone:'Xiaomi 14',type:'Carbon Fiber',rating:5,text:'Nhẹ hơn mong đợi, cứng cáp. Cảm giác thể thao. Bạn bè ai cũng hỏi mua ở đâu.'},
-  {name:'Ngọc Trâm',phone:'OPPO Reno 11',type:'Glitter Kim Tuyến',rating:5,text:'Lấp lánh dưới nắng quá đẹp! Đi tiệc ai cũng khen. Ship nhanh, giá tốt 😍'},
-  {name:'Văn Hùng',phone:'OnePlus 12',type:'Da Thật',rating:4,text:'Da mềm, đường khâu tỉ mỉ. Sang hơn hẳn ốp nhựa. Sau 2 tháng lên patina rất đẹp.'},
-  {name:'Thùy Linh',phone:'iPhone 15 Pro Max',type:'MagSafe',rating:5,text:'Sạc MagSafe dính cực chặt. Ốp mỏng nhẹ mà bảo vệ tốt. Rất hài lòng!'},
-  {name:'Quốc Bảo',phone:'Pixel 8 Pro',type:'Trong Suốt',rating:4,text:'Nhìn rõ lưng máy mà vẫn bảo vệ. Cam kết không ố vàng, sau 2 tháng đúng là chưa ố.'},
-  {name:'Kim Ngân',phone:'iPhone 13 Pro',type:'Silicone Mềm',rating:5,text:'Ốp mềm mại, màu pastel dễ thương. Lắp vừa khít, nút bấm vẫn nhạy như không ốp.'},
+  {name:'Đức Anh',phone:'Xiaomi 14',type:'Carbon Fiber',rating:5,text:'Nhẹ, cứng cáp. Cảm giác thể thao. Bạn bè ai cũng hỏi mua ở đâu.'},
+  {name:'Ngọc Trâm',phone:'OPPO Reno 11',type:'Glitter Kim Tuyến',rating:5,text:'Lấp lánh dưới nắng quá đẹp! Đi tiệc ai cũng khen 😍'},
+  {name:'Văn Hùng',phone:'OnePlus 12',type:'Da Thật',rating:4,text:'Da mềm, khâu tỉ mỉ. Sang hơn ốp nhựa. Sau 2 tháng lên patina đẹp.'},
+  {name:'Thùy Linh',phone:'iPhone 15 Pro Max',type:'MagSafe',rating:5,text:'Sạc MagSafe dính cực chặt. Ốp mỏng nhẹ mà bảo vệ tốt!'},
+  {name:'Quốc Bảo',phone:'Pixel 8 Pro',type:'Trong Suốt',rating:4,text:'Nhìn rõ lưng máy vẫn bảo vệ. Không ố vàng sau 2 tháng.'},
+  {name:'Kim Ngân',phone:'iPhone 13 Pro',type:'Silicone Mềm',rating:5,text:'Ốp mềm, màu pastel dễ thương. Nút bấm nhạy như không ốp.'},
 ];
 
 var priceMap={leather:350000,carbon:300000,armor:250000,magsafe:280000,wood:320000,glitter:200000,printed:180000,matte:220000,silicone:120000,clear:150000};
@@ -305,24 +295,78 @@ brands.forEach(function(b){b.models.forEach(function(m){types.forEach(function(t
 })})});
 
 var curBrand='',curType='',curSort='popular',curSearch='',curPage=1;
-var curSlide=0,totalSlides=3,slideTimer;
+var curSlide=0,totalSlides=3,slideInterval;
+var reviewExpanded=false;
 
+// ===== HEADER SPACER =====
 function updateSpacer(){
   var hdr=document.getElementById('headerWrap');
   if(hdr)document.getElementById('headerSpacer').style.height=hdr.offsetHeight+'px';
 }
 
-// ===== SLIDER =====
+// ===== HERO SLIDER WITH TOUCH SWIPE =====
+var sliderEl=document.getElementById('heroSlider');
+var sliderTrack=document.getElementById('sliderTrack');
+var touchStartX=0,touchEndX=0;
+var isDragging=false,startTransform=0;
+
 function goSlide(n){
-  curSlide=n;
-  document.getElementById('sliderTrack').style.transform='translateX(-'+(n*100)+'%)';
-  document.querySelectorAll('.slider-dot').forEach(function(d,i){d.classList.toggle('active',i===n)});
-  resetSlideTimer();
+  curSlide=((n%totalSlides)+totalSlides)%totalSlides;
+  sliderTrack.style.transform='translateX(-'+(curSlide*100)+'%)';
+  document.querySelectorAll('.slider-dot').forEach(function(d,i){d.classList.toggle('active',i===curSlide)});
 }
-function nextSlide(){goSlide((curSlide+1)%totalSlides)}
+
+sliderEl.addEventListener('touchstart',function(e){
+  touchStartX=e.changedTouches[0].screenX;
+  sliderTrack.style.transition='none';
+}, {passive:true});
+
+sliderEl.addEventListener('touchend',function(e){
+  touchEndX=e.changedTouches[0].screenX;
+  sliderTrack.style.transition='transform .4s ease';
+  var diff=touchStartX-touchEndX;
+  if(Math.abs(diff)>50){
+    if(diff>0)goSlide(curSlide+1);
+    else goSlide(curSlide-1);
+    resetSlideTimer();
+  } else {
+    // Snap back to current slide
+    goSlide(curSlide);
+  }
+});
+
+// Mouse swipe on desktop
+sliderEl.addEventListener('mousedown',function(e){
+  isDragging=true;
+  touchStartX=e.screenX;
+  sliderTrack.style.transition='none';
+  e.preventDefault();
+});
+document.addEventListener('mousemove',function(e){
+  if(!isDragging)return;
+  var dx=e.screenX-touchStartX;
+  var shift=-curSlide*sliderEl.offsetWidth+dx;
+  sliderTrack.style.transform='translateX('+shift+'px)';
+});
+document.addEventListener('mouseup',function(e){
+  if(!isDragging)return;
+  isDragging=false;
+  sliderTrack.style.transition='transform .4s ease';
+  var diff=touchStartX-e.screenX;
+  if(Math.abs(diff)>50){
+    if(diff>0)goSlide(curSlide+1);
+    else goSlide(curSlide-1);
+    resetSlideTimer();
+  } else {
+    goSlide(curSlide);
+  }
+});
+
+function nextSlide(){goSlide(curSlide+1)}
 function resetSlideTimer(){clearTimeout(slideTimer);slideTimer=setTimeout(function(){},1000)}
+var slideTimer;
 resetSlideTimer();
-var slideInterval=setInterval(function(){goSlide((curSlide+1)%totalSlides)},5000);
+slideInterval=setInterval(function(){goSlide(curSlide+1)},5000);
 
 // ===== COUNTDOWN =====
 var cdEnd=new Date().getTime()+2*3600000+14*60000+35*1000;
@@ -330,15 +374,61 @@ function updateCountdown(){
   var now=new Date().getTime(),d=Math.max(0,cdEnd-now);
   var h=Math.floor(d/3600000),m=Math.floor((d%3600000)/60000),s=Math.floor((d%60000)/1000);
   var t=String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
-  var el1=document.getElementById('countdown1'),el2=document.getElementById('countdown2');
-  if(el1)el1.textContent=t;if(el2)el2.textContent=t;
+  var e1=document.getElementById('countdown1'),e2=document.getElementById('countdown2');
+  if(e1)e1.textContent=t;if(e2)e2.textContent=t;
 }
 setInterval(updateCountdown,1000);updateCountdown();
 
 // ===== FILTERS =====
-function setBrand(el,val){curBrand=val;curPage=1;document.querySelectorAll('[data-brand]').forEach(function(c){c.classList.toggle('active',c.dataset.brand===val)});loadProducts()}
-function setType(el,val){curType=val;curPage=1;document.querySelectorAll('[data-type]').forEach(function(c){c.classList.toggle('active',c.dataset.type===val)});loadProducts()}
+function setBrand(el,val){curBrand=val;curPage=1;updateChips();loadProducts()}
+function setType(el,val){curType=val;curPage=1;updateChips();loadProducts()}
 function filter(){curSearch=document.getElementById('searchInp').value;curSort=document.getElementById('sortSel').value;curPage=1;loadProducts()}
+
+function updateChips(){
+  document.querySelectorAll('.chip').forEach(function(c){
+    var isBrand=c.dataset.brand!==undefined;
+    var isType=c.dataset.type!==undefined;
+    if(isBrand)c.classList.toggle('active',c.dataset.brand===curBrand);
+    if(isType)c.classList.toggle('active',c.dataset.type===curType);
+  });
+  // Update active count
+  var cnt=0;if(curBrand)cnt++;if(curType)cnt++;
+  var el=document.getElementById('activeCount');
+  if(cnt>0)el.textContent='('+cnt+')';
+  else el.textContent='';
+}
+
+function toggleFilters(){
+  var wrap=document.getElementById('filterListWrap');
+  var arrow=document.getElementById('filterArrow');
+  var open=wrap.classList.toggle('open');
+  arrow.textContent=open?'▲':'▼';
+  // Build filter list if not built yet
+  if(!wrap.dataset.built)buildFilterList();
+}
+
+function buildFilterList(){
+  var wrap=document.getElementById('filterList');
+  var h='';
+
+  // Brand section
+  h+='<div class="col-span-full"><div class="text-[10px] sm:text-[11px] font-bold text-gray-400 uppercase mb-1.5">📱 Hãng</div></div>';
+  h+='<span class="chip active px-2.5 py-1 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none text-center" data-brand="" onclick="setBrand(this,\'\')">Tất cả</span>';
+  brands.forEach(function(b){
+    h+='<span class="chip px-2.5 py-1 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none text-center" data-brand="'+b.id+'" onclick="setBrand(this,\''+b.id+'\')">🍎 '+b.name+'</span>';
+  });
+
+  // Type section
+  h+='<div class="col-span-full mt-2"><div class="text-[10px] sm:text-[11px] font-bold text-gray-400 uppercase mb-1.5">🎨 Loại ốp</div></div>';
+  h+='<span class="chip active px-2.5 py-1 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none text-center" data-type="" onclick="setType(this,\'\')">Tất cả</span>';
+  types.forEach(function(t){
+    h+='<span class="chip px-2.5 py-1 text-[11px] sm:text-xs font-medium border border-gray-200 rounded-full cursor-pointer hover:border-pri-light transition select-none text-center" data-type="'+t.id+'" onclick="setType(this,\''+t.id+'\')">'+t.icon+' '+t.name+'</span>';
+  });
+
+  wrap.innerHTML=h;
+  document.getElementById('filterListWrap').dataset.built='1';
+  updateChips();
+}
 
 function applyFilters(arr){
   var r=arr.slice();
@@ -405,42 +495,42 @@ function loadProducts(){
   r=r.slice((page-1)*per,page*per);
   document.getElementById('countLabel').textContent='('+total+')';
   document.getElementById('pgrid').innerHTML=r.map(function(p){return productCard(p,false)}).join('');
+
   var pagi=document.getElementById('pagi');
   if(pages<=1){pagi.innerHTML='';return}
   var ph='';
-
-  // Window: show ~5 page numbers
   var win=5;
   var start=Math.max(1,page-Math.floor(win/2));
   var end=Math.min(pages,start+win-1);
   if(end-start<win-1)start=Math.max(1,end-win+1);
 
-  // Left arrow
   if(page>1){
-    ph+='<button class="px-2 sm:px-2.5 py-1 sm:py-1.5 text-[11px] sm:text-xs font-semibold rounded-lg border cursor-pointer transition-all duration-150 bg-white border-gray-200 hover:border-pri text-pri" onclick="goPage('+(page-1)+')" title="Trang trước">«</button>';
-    // Show "1 ..." if start > 1
+    ph+='<button class="px-2 sm:px-2.5 py-1 sm:py-1.5 text-[11px] sm:text-xs font-semibold rounded-lg border cursor-pointer transition-all duration-150 bg-white border-gray-200 hover:border-pri text-pri" onclick="goPage('+(page-1)+')">«</button>';
     if(start>1){
       ph+='<button class="px-2.5 sm:px-3 py-1 sm:py-1.5 text-[11px] sm:text-xs font-semibold rounded-lg border cursor-pointer transition-all duration-150 bg-white border-gray-200 hover:border-pri" onclick="goPage(1)">1</button>';
       if(start>2)ph+='<span class="px-1 text-gray-400 self-center">…</span>';
     }
   }
-
   for(var i=start;i<=end;i++){
     ph+='<button class="px-2.5 sm:px-3 py-1 sm:py-1.5 text-[11px] sm:text-xs font-semibold rounded-lg border cursor-pointer transition-all duration-150 '+(i===page?'bg-pri text-white border-pri':'bg-white border-gray-200 hover:border-pri')+'" onclick="goPage('+i+')">'+i+'</button>';
   }
-
-  // Right arrow
   if(page<pages){
     if(end<pages-1)ph+='<span class="px-1 text-gray-400 self-center">…</span>';
     if(end<pages){
       ph+='<button class="px-2.5 sm:px-3 py-1 sm:py-1.5 text-[11px] sm:text-xs font-semibold rounded-lg border cursor-pointer transition-all duration-150 bg-white border-gray-200 hover:border-pri" onclick="goPage('+pages+')">'+pages+'</button>';
     }
-    ph+='<button class="px-2 sm:px-2.5 py-1 sm:py-1.5 text-[11px] sm:text-xs font-semibold rounded-lg border cursor-pointer transition-all duration-150 bg-white border-gray-200 hover:border-pri text-pri" onclick="goPage('+(page+1)+')" title="Trang sau">»</button>';
+    ph+='<button class="px-2 sm:px-2.5 py-1 sm:py-1.5 text-[11px] sm:text-xs font-semibold rounded-lg border cursor-pointer transition-all duration-150 bg-white border-gray-200 hover:border-pri text-pri" onclick="goPage('+(page+1)+')">»</button>';
   }
-
   pagi.innerHTML=ph;
 }
-function goPage(p){curPage=p;loadProducts();window.scrollTo({top:300,behavior:'smooth'})}
+
+function goPage(p){
+  curPage=p;loadProducts();
+  setTimeout(function(){
+    var el=document.getElementById('products');
+    if(el)el.scrollIntoView({behavior:'smooth',block:'start'});
+  },100);
+}
 
 function openP(id){
   var p=products.find(function(x){return x.id===id});if(!p)return;
@@ -452,30 +542,25 @@ function openP(id){
   h+='<div class="text-base sm:text-lg font-extrabold mt-0.5">'+p.model+'</div>';
   h+='<div class="text-xs sm:text-sm text-gray-500 mb-2">'+p.typeIcon+' '+p.typeName+'</div>';
   h+='<div class="text-[11px] sm:text-xs text-gray-500 leading-relaxed bg-gray-50 p-2.5 rounded-lg mb-3">'+p.desc+'</div>';
-
   h+='<div class="flex items-baseline gap-2 mb-1">';
   if(p.discount>0)h+='<span class="text-xs sm:text-sm text-gray-400 line-through">'+p.originalPrice.toLocaleString('vi-VN')+'₫</span>';
   h+='<span class="text-xl sm:text-2xl font-extrabold text-hot">'+p.price.toLocaleString('vi-VN')+'₫</span>';
   if(p.discount>0)h+='<span class="text-[10px] sm:text-xs bg-hot text-white font-bold px-1.5 py-0.5 rounded">-'+p.discount+'%</span>';
   h+='</div>';
-
   h+='<div class="flex items-center gap-2 sm:gap-3 text-[10px] sm:text-[11px] text-gray-400 mb-3 flex-wrap">';
   h+='<span>⭐ '+p.rating+'</span><span>📦 '+p.sold+' đã bán</span><span class="text-hot pulse">👁 '+p.viewers+' đang xem</span>';
   h+='</div>';
-
   h+='<div class="grid grid-cols-2 gap-2 mb-3">';
   h+='<div class="bg-gray-50 p-2 rounded-lg"><div class="text-[9px] sm:text-[10px] text-gray-400 font-semibold uppercase">Hãng</div><div class="text-xs sm:text-sm font-bold">'+p.brandName+'</div></div>';
-  h+='<div class="bg-gray-50 p-2 rounded-lg"><div class="text-[9px] sm:text-[10px] text-gray-400 font-semibold uppercase">Loại ốp</div><div class="text-xs sm:text-sm font-bold">'+p.typeName+'</div></div>';
+  h+='<div class="bg-gray-50 p-2 rounded-lg"><div class="text-[9px] sm:text-[10px] text-gray-400 font-semibold uppercase">Loại</div><div class="text-xs sm:text-sm font-bold">'+p.typeName+'</div></div>';
   h+='<div class="bg-gray-50 p-2 rounded-lg"><div class="text-[9px] sm:text-[10px] text-gray-400 font-semibold uppercase">Tình trạng</div><div class="text-xs sm:text-sm font-bold text-green-600">Còn hàng</div></div>';
-  h+='<div class="bg-gray-50 p-2 rounded-lg"><div class="text-[9px] sm:text-[10px] text-gray-400 font-semibold uppercase">Giao hàng</div><div class="text-xs sm:text-sm font-bold">1–3 ngày</div></div>';
+  h+='<div class="bg-gray-50 p-2 rounded-lg"><div class="text-[9px] sm:text-[10px] text-gray-400 font-semibold uppercase">Giao</div><div class="text-xs sm:text-sm font-bold">1–3 ngày</div></div>';
   h+='</div>';
-
   h+='<a class="block text-center py-2.5 sm:py-3 rounded-lg bg-gradient-to-br from-hot to-orange-500 text-white font-bold text-xs sm:text-sm mb-2 hover:scale-[1.02] transition shadow-lg shadow-hot/20" href="https://zalo.me" target="_blank">⚡ Đặt mua ngay qua Zalo — Giảm '+p.discount+'%</a>';
   h+='<p class="text-[9px] sm:text-[10px] text-center text-gray-400 mb-3">💬 Nhắn Zalo trong 5 phút để giữ giá sale</p>';
-
   if(prev.length){
     h+='<div class="font-bold text-xs sm:text-sm mb-2">Đánh giá từ khách</div>';
-    prev.slice(0,3).forEach(function(r){
+    prev.slice(0,2).forEach(function(r){
       h+='<div class="bg-gray-50 p-2 sm:p-2.5 rounded-lg mb-2"><strong class="text-[11px] sm:text-xs">'+r.name+'</strong> <span class="text-yellow-500 text-[10px] sm:text-xs">'+('★'.repeat(r.rating))+'</span><br><span class="text-[10px] sm:text-[11px] text-gray-500">'+r.text+'</span></div>';
     });
   }
@@ -489,29 +574,50 @@ function closeModal(){
   document.getElementById('modal').classList.remove('flex');
 }
 
-// Reviews
+// ===== REVIEWS (truncated + expand) =====
 (function(){
-  var h='';
-  reviews.forEach(function(r){
-    h+='<div class="bg-white rounded-xl p-3 sm:p-3.5 shadow-sm border border-gray-100">';
-    h+='<div class="flex items-center gap-2 sm:gap-2.5 mb-1 sm:mb-1.5">';
-    h+='<div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-pri to-acc flex items-center justify-center text-white font-bold text-[11px] sm:text-xs shrink-0">'+r.name[0]+'</div>';
-    h+='<div><div class="font-semibold text-xs sm:text-sm">'+r.name+'</div><div class="text-[9px] sm:text-[10px] text-gray-400">'+r.phone+' · '+r.type+'</div></div>';
-    h+='</div>';
-    h+='<div class="text-yellow-500 text-[10px] sm:text-xs mb-1">'+('★'.repeat(r.rating))+('☆'.repeat(5-r.rating))+'</div>';
-    h+='<div class="text-[11px] sm:text-xs text-gray-500 leading-relaxed">'+r.text+'</div>';
-    h+='</div>';
-  });
-  document.getElementById('rgrid').innerHTML=h;
+  var visible=3;
+  function renderReviews(limit){
+    var h='';
+    reviews.slice(0,limit).forEach(function(r){
+      h+='<div class="bg-white rounded-xl p-3 sm:p-3.5 shadow-sm border border-gray-100">';
+      h+='<div class="flex items-center gap-2 sm:gap-2.5 mb-1 sm:mb-1.5">';
+      h+='<div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-pri to-acc flex items-center justify-center text-white font-bold text-[11px] sm:text-xs shrink-0">'+r.name[0]+'</div>';
+      h+='<div><div class="font-semibold text-xs sm:text-sm">'+r.name+'</div><div class="text-[9px] sm:text-[10px] text-gray-400">'+r.phone+' · '+r.type+'</div></div>';
+      h+='</div>';
+      h+='<div class="text-yellow-500 text-[10px] sm:text-xs mb-1">'+('★'.repeat(r.rating))+('☆'.repeat(5-r.rating))+'</div>';
+      h+='<div class="text-[11px] sm:text-xs text-gray-500 leading-relaxed">'+r.text+'</div>';
+      h+='</div>';
+    });
+    document.getElementById('rgrid').innerHTML=h;
+  }
+
+  function renderMoreBtn(limit){
+    if(limit<reviews.length){
+      document.getElementById('reviewMore').innerHTML='<button class="text-sm font-semibold text-pri border border-pri/30 rounded-lg px-4 py-2 hover:bg-pri/5 transition cursor-pointer" onclick="expandReviews()">📋 Xem thêm '+ (reviews.length-limit) +' đánh giá ▼</button>';
+    } else {
+      document.getElementById('reviewMore').innerHTML='<button class="text-sm font-semibold text-gray-400 border border-gray-200 rounded-lg px-4 py-2 hover:bg-gray-100 transition cursor-pointer" onclick="collapseReviews()">▲ Thu gọn</button>';
+    }
+  }
+
+  renderReviews(visible);
+  renderMoreBtn(visible);
+
+  window.expandReviews=function(){
+    renderReviews(reviews.length);
+    renderMoreBtn(reviews.length);
+  };
+  window.collapseReviews=function(){
+    renderReviews(visible);
+    renderMoreBtn(visible);
+  };
 })();
 
-// Init
+// ===== INIT =====
 loadBestSellers();
 loadFlashSale();
 loadProducts();
 updateSpacer();
-
-// Recalculate spacer on resize
 window.addEventListener('resize',updateSpacer);
 </script>
 </body>
