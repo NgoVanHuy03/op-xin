@@ -367,6 +367,10 @@ function openFilterOverlay(){
 }
 function closeFilterOverlay(){
   document.getElementById('filterOverlay').classList.remove('show');
+  loadProducts();
+  setTimeout(function(){
+    document.getElementById('products').scrollIntoView({behavior:'smooth',block:'start'});
+  },150);
 }
 
 function buildFilterChips(){
